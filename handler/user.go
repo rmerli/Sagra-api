@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UserHandler struct {}
+type UserHandler struct{}
 
-func(h UserHandler) HandleUserShow(c echo.Context) error {
+func (h UserHandler) HandleUserShow(c echo.Context) error {
 	return render(c, user.Show())
 }
