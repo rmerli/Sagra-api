@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gtmx/handler"
+	"gtmx/src/handler"
 
 	"github.com/labstack/echo/v4"
 )
