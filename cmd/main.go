@@ -1,14 +1,24 @@
 package main
 
 import (
-	"gtmx/src/handler"
+	"database/sql"
+	"gtmx/src/routes"
+
+	_ "github.com/lib/pq"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+
+	db, err := sql.Open("postgres", "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
 	app := echo.New()
-	userHandler := handler.UserHandler{}
-	app.GET("/user", userHandler.HandleUserShow)
+	router := routes.New(app)
+	router.SetRoutes(db)
 	app.Logger.Fatal(app.Start(":8080"))
 }

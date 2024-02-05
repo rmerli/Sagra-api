@@ -1,0 +1,12 @@
+package product
+
+import (
+	"gtmx/src/view/layout"
+	"gtmx/src/model"
+)
+
+templ ShowView(product model.Product) {
+	@layout.Base() {
+		<h1> Product: {product.Name.String}</h1>
+	}
+}

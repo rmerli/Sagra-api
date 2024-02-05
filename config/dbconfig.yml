@@ -1,0 +1,5 @@
+development:
+  dialect: postgres
+  datasource: host=localhost dbname=sagra_go user=${DB_USER} password=${DB_PASSWORD} sslmode=disable
+  dir: migrations/postgres
+  table: migrations

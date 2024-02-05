@@ -1,0 +1,14 @@
+package product
+
+import (
+	"gtmx/src/view/layout"
+	"gtmx/src/model"
+)
+
+templ IndexView(products model.ProductSlice) {
+	@layout.Base() {
+		for _, product := range products {
+			<h1> Product: {product.Name.String}</h1>
+		}
+	}
+}
