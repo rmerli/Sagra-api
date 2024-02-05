@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -24,8 +23,8 @@ import (
 
 // Product is an object representing the database table.
 type Product struct {
-	ID   int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name null.String `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
+	ID   int    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name string `boil:"name" json:"name" toml:"name" yaml:"name"`
 
 	R *productR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L productL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -72,46 +71,26 @@ func (w whereHelperint) NIN(slice []int) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
-type whereHelpernull_String struct{ field string }
+type whereHelperstring struct{ field string }
 
-func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-func (w whereHelpernull_String) LIKE(x null.String) qm.QueryMod {
-	return qm.Where(w.field+" LIKE ?", x)
-}
-func (w whereHelpernull_String) NLIKE(x null.String) qm.QueryMod {
-	return qm.Where(w.field+" NOT LIKE ?", x)
-}
-func (w whereHelpernull_String) ILIKE(x null.String) qm.QueryMod {
-	return qm.Where(w.field+" ILIKE ?", x)
-}
-func (w whereHelpernull_String) NILIKE(x null.String) qm.QueryMod {
-	return qm.Where(w.field+" NOT ILIKE ?", x)
-}
-func (w whereHelpernull_String) IN(slice []string) qm.QueryMod {
+func (w whereHelperstring) EQ(x string) qm.QueryMod     { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperstring) NEQ(x string) qm.QueryMod    { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperstring) LT(x string) qm.QueryMod     { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperstring) LTE(x string) qm.QueryMod    { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperstring) GT(x string) qm.QueryMod     { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperstring) GTE(x string) qm.QueryMod    { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+func (w whereHelperstring) LIKE(x string) qm.QueryMod   { return qm.Where(w.field+" LIKE ?", x) }
+func (w whereHelperstring) NLIKE(x string) qm.QueryMod  { return qm.Where(w.field+" NOT LIKE ?", x) }
+func (w whereHelperstring) ILIKE(x string) qm.QueryMod  { return qm.Where(w.field+" ILIKE ?", x) }
+func (w whereHelperstring) NILIKE(x string) qm.QueryMod { return qm.Where(w.field+" NOT ILIKE ?", x) }
+func (w whereHelperstring) IN(slice []string) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
 	}
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
-func (w whereHelpernull_String) NIN(slice []string) qm.QueryMod {
+func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
@@ -119,15 +98,12 @@ func (w whereHelpernull_String) NIN(slice []string) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
-func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-
 var ProductWhere = struct {
 	ID   whereHelperint
-	Name whereHelpernull_String
+	Name whereHelperstring
 }{
 	ID:   whereHelperint{field: "\"products\".\"id\""},
-	Name: whereHelpernull_String{field: "\"products\".\"name\""},
+	Name: whereHelperstring{field: "\"products\".\"name\""},
 }
 
 // ProductRels is where relationship names are stored.
@@ -148,8 +124,8 @@ type productL struct{}
 
 var (
 	productAllColumns            = []string{"id", "name"}
-	productColumnsWithoutDefault = []string{"id"}
-	productColumnsWithDefault    = []string{"name"}
+	productColumnsWithoutDefault = []string{"name"}
+	productColumnsWithDefault    = []string{"id"}
 	productPrimaryKeyColumns     = []string{"id"}
 	productGeneratedColumns      = []string{}
 )

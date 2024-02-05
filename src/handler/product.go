@@ -2,6 +2,8 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
+	"gtmx/src/model"
 	"gtmx/src/service"
 	"gtmx/src/view/product"
 	"net/http"
@@ -58,5 +60,21 @@ func (h ProductHandler) HandleNew(c echo.Context) error {
 }
 
 func (h ProductHandler) HandleCreate(c echo.Context) error {
-	return c.Redirect(http.StatusMovedPermanently, "/product")
+	productService := service.Product{
+		Db:  h.Db,
+		Ctx: c,
+	}
+
+	p := model.Product{}
+	p.Name = c.FormValue("name")
+
+	p, err := productService.Insert(p)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	endpoint := fmt.Sprintf("/product/%d", p.ID)
+
+	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

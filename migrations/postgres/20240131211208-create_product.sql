@@ -1,6 +1,7 @@
 -- +migrate Up
 CREATE table products (
-	id int PRIMARY KEY,
-	name text);
+	id SERIAL PRIMARY KEY,
+	name text NOT NULL
+);
 -- +migrate Down
 DROP table products;

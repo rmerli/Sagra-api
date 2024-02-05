@@ -5,6 +5,7 @@ import (
 	"gtmx/src/model"
 
 	"github.com/labstack/echo/v4"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type Product struct {
@@ -28,4 +29,14 @@ func (p Product) GetAll() (model.ProductSlice, error) {
 	}
 
 	return products, nil
+}
+
+func (p Product) Insert(newProduct model.Product) (model.Product, error) {
+	print(newProduct.Name)
+	err := newProduct.Insert(p.Ctx.Request().Context(), p.Db, boil.Infer())
+	if err != nil {
+		return model.Product{}, err
+	}
+	newProduct.Reload(p.Ctx.Request().Context(), p.Db)
+	return newProduct, nil
 }
