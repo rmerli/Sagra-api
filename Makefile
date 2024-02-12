@@ -1,7 +1,5 @@
 run:
-	sqlboiler --config=sqlboiler.toml psql
-	templ generate
-	go run cmd/main.go
+	air
 build:
 	sqlboiler --config=sqlboiler.toml psql
 	templ generate
