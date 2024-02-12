@@ -3,4 +3,4 @@ bin
 node_modules
 .env
 ./_docker/postgres/
-./static/css/tailwind.min.css
+static/css/tailwind.min.css
