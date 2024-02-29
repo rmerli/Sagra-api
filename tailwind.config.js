@@ -2,6 +2,7 @@
 module.exports = {
 	content: [
 		'src/view/**/*.templ',
+		'src/view/**/*.go',
 	],
 	darkMode: 'class',
 	theme: {

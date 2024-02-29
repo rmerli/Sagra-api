@@ -2,13 +2,13 @@ package product
 
 import (
 	"gtmx/src/view/layout"
-	"gtmx/src/model"
+	"gtmx/src/database"
 )
 
-templ IndexView(products model.ProductSlice) {
+templ IndexView(products []database.Product) {
 	@layout.Base() {
 		for _, product := range products {
-			<h1> Product: {product.Name}</h1>
+			<h1>Product: { product.Name }</h1>
 		}
 	}
 }

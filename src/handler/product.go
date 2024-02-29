@@ -1,58 +1,49 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
+	"gtmx/src/database"
+	"gtmx/src/database/repository"
 	"gtmx/src/model"
-	"gtmx/src/service"
 	"gtmx/src/view/product"
+	"math/big"
 	"net/http"
 	"strconv"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 )
 
 type ProductHandler struct {
-	Db *sql.DB
+	Repo *repository.ProductRepository
 }
 
 func (h ProductHandler) HandleIndex(c echo.Context) error {
-	productService := service.Product{
-		Db:  h.Db,
-		Ctx: c,
-	}
-
-	products, err := productService.GetAll()
+	products, err := h.Repo.GetAll(c.Request().Context())
 
 	if err != nil {
-		println(err.Error())
-		return echo.NewHTTPError(http.StatusNotFound)
+		return err
 	}
 
 	return render(c, product.IndexView(products))
 }
 
 func (h ProductHandler) HandleShow(c echo.Context) error {
-	productService := service.Product{
-		Db:  h.Db,
-		Ctx: c,
-	}
-
 	idString := c.Param("id")
-	id, err := strconv.Atoi(idString)
 
+	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest)
+		return err
 	}
 
-	p, err := productService.GetOneById(id)
-
+	p, err := h.Repo.GetOneById(c.Request().Context(), id)
 	if err != nil {
-		println(err.Error())
-		return echo.NewHTTPError(http.StatusNotFound)
+		return err
 	}
 
-	return render(c, product.ShowView(p))
+	viewProduct, err := model.Product{}.FromDatabase(p)
+
+	return render(c, product.ShowView(viewProduct))
 }
 
 func (h ProductHandler) HandleNew(c echo.Context) error {
@@ -60,21 +51,26 @@ func (h ProductHandler) HandleNew(c echo.Context) error {
 }
 
 func (h ProductHandler) HandleCreate(c echo.Context) error {
-	productService := service.Product{
-		Db:  h.Db,
-		Ctx: c,
-	}
-
-	p := model.Product{}
-	p.Name = c.FormValue("name")
-
-	p, err := productService.Insert(p)
+	priceString := c.FormValue("price")
+	price, err := strconv.ParseFloat(priceString, 64)
 
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError)
+		return err
+
 	}
 
-	endpoint := fmt.Sprintf("/product/%d", p.ID)
+	p := database.Product{
+		Name:  c.FormValue("name"),
+		Abbr:  c.FormValue("abbr"),
+		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
+	}
+
+	insertedProduct, err := h.Repo.Insert(c.Request().Context(), p)
+	if err != nil {
+		return err
+	}
+
+	endpoint := fmt.Sprintf("/product/%d", insertedProduct.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }
