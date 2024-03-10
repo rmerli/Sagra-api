@@ -1,0 +1,17 @@
+package variant
+
+import (
+	"gtmx/src/view/layout"
+	"gtmx/src/database"
+)
+
+templ IndexView(variants []database.Variant) {
+	@layout.Base() {
+		<div class="text-right">
+			<a href="/variant/new"><button class="btn btn-primary">New Variant</button></a>
+		</div>
+		for _, variant := range variants {
+			<h1>Variant: { variant.Name }</h1>
+		}
+	}
+}

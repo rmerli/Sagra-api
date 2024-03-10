@@ -15,11 +15,11 @@ import (
 )
 
 type ProductHandler struct {
-	Repo *repository.ProductRepository
+	Repo *repository.CatalogRepository
 }
 
 func (h ProductHandler) HandleIndex(c echo.Context) error {
-	products, err := h.Repo.GetAll(c.Request().Context())
+	products, err := h.Repo.ListProducts(c.Request().Context())
 
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (h ProductHandler) HandleShow(c echo.Context) error {
 		return err
 	}
 
-	p, err := h.Repo.GetOneById(c.Request().Context(), id)
+	p, err := h.Repo.GetOneProductById(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
 	}
 
-	insertedProduct, err := h.Repo.Insert(c.Request().Context(), p)
+	insertedProduct, err := h.Repo.InsertProduct(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,9 @@ import (
 
 templ IndexView(products []database.Product) {
 	@layout.Base() {
+		<div class="text-right">
+			<a href="/product/new"><button class="btn btn-primary">New Product</button></a>
+		</div>
 		for _, product := range products {
 			<h1>Product: { product.Name }</h1>
 		}

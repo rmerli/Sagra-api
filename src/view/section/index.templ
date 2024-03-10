@@ -1,0 +1,17 @@
+package section
+
+import (
+	"gtmx/src/view/layout"
+	"gtmx/src/database"
+)
+
+templ IndexView(sections []database.Section) {
+	@layout.Base() {
+		<div class="text-right">
+			<a href="/section/new"><button class="btn btn-primary">New Section</button></a>
+		</div>
+		for _, section := range sections {
+			<h1>Section: { section.Name }</h1>
+		}
+	}
+}
