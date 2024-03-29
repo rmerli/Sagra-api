@@ -32,6 +32,12 @@ type Section struct {
 	Name string
 }
 
+type User struct {
+	ID       int64
+	Email    string
+	Password string
+}
+
 type Variant struct {
 	ID    int64
 	Name  string

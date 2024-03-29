@@ -2,6 +2,6 @@ bin
 *_templ.go
 node_modules
 .env
-./_docker/postgres/
+_docker/postgres/*
 static/css/tailwind.min.css
 tmp

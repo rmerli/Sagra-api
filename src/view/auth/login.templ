@@ -1,0 +1,20 @@
+package auth
+
+import (
+	"gtmx/src/view/layout"
+)
+
+templ LoginView() {
+	@layout.Base() {
+		<div class="text-center">
+			Login
+		</div>
+		<form action="/login" method="POST">
+			<div>
+				<input type="email" name="email" placeholder="Email" class="input input-bordered w-full max-w-xs"/>
+				<input type="password" name="password" placeholder="Password" class="input input-bordered w-full max-w-xs"/>
+			</div>
+			<button class="btn input-bordered">Log In</button>
+		</form>
+	}
+}

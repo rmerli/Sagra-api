@@ -34,9 +34,14 @@ CREATE TABLE products_variants (
 	CONSTRAINT fk_variant FOREIGN KEY(variant_id) REFERENCES variants(id)
 );
 
-
+CREATE TABLE users (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	email text NOT NULL UNIQUE,
+	password text NOT NULL
+);
 
 -- +migrate Down
+DROP table users;
 DROP table products_variants;
 DROP table variants;
 DROP table products;
