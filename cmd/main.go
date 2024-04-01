@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/gob"
 	"gtmx/src/database"
-	"gtmx/src/routes"
+	"gtmx/src/router"
 	"log"
 	"time"
 
@@ -36,7 +36,8 @@ func main() {
 	}
 
 	app := echo.New()
-	router := routes.New(app)
-	router.SetRoutes(queries, store)
+	router := router.New(app, queries, store)
+	router.SetRoutes()
+
 	app.Logger.Fatal(app.Start(":8080"))
 }

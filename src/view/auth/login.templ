@@ -2,14 +2,15 @@ package auth
 
 import (
 	"gtmx/src/view/layout"
+	"gtmx/src/router/routes"
 )
 
 templ LoginView() {
-	@layout.Base() {
+	@layout.Login() {
 		<div class="text-center">
 			Login
 		</div>
-		<form action="/login" method="POST">
+		<form action={ templ.URL(routes.GetPath("login")) } method="POST">
 			<div>
 				<input type="email" name="email" placeholder="Email" class="input input-bordered w-full max-w-xs"/>
 				<input type="password" name="password" placeholder="Password" class="input input-bordered w-full max-w-xs"/>

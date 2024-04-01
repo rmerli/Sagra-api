@@ -5,6 +5,9 @@ import (
 	"gtmx/src/database"
 	"gtmx/src/database/repository"
 	"gtmx/src/model"
+	"gtmx/src/router/routes"
+	"gtmx/src/service/auth"
+	"gtmx/src/view/layout"
 	"gtmx/src/view/product"
 	"math/big"
 	"net/http"
@@ -19,16 +22,25 @@ type ProductHandler struct {
 }
 
 func (h ProductHandler) HandleIndex(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	products, err := h.Repo.ListProducts(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, product.IndexView(products))
+	return render(c, layout.ProtectedViews(user, product.IndexView(products)))
 }
 
 func (h ProductHandler) HandleShow(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
 	idString := c.Param("id")
 
 	id, err := strconv.ParseInt(idString, 10, 64)
@@ -42,12 +54,16 @@ func (h ProductHandler) HandleShow(c echo.Context) error {
 	}
 
 	viewProduct, err := model.Product{}.FromDatabase(p)
-
-	return render(c, product.ShowView(viewProduct))
+	return render(c, layout.ProtectedViews(user, product.ShowView(viewProduct)))
 }
 
 func (h ProductHandler) HandleNew(c echo.Context) error {
-	return render(c, product.NewView())
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	return render(c, layout.ProtectedViews(user, product.NewView()))
 }
 
 func (h ProductHandler) HandleCreate(c echo.Context) error {
@@ -70,7 +86,7 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("/product/%d", insertedProduct.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-product"), insertedProduct.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

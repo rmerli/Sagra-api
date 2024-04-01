@@ -6,11 +6,11 @@ import (
 )
 
 type CatalogRepository struct {
-	Db *database.Queries
+	db *database.Queries
 }
 
 func (r CatalogRepository) ListCategories(ctx context.Context) ([]database.Category, error) {
-	categories, err := r.Db.ListCategories(ctx)
+	categories, err := r.db.ListCategories(ctx)
 	if err != nil {
 		return []database.Category{}, err
 
@@ -20,7 +20,7 @@ func (r CatalogRepository) ListCategories(ctx context.Context) ([]database.Categ
 }
 
 func (r CatalogRepository) GetOneCategoryById(ctx context.Context, id int64) (database.Category, error) {
-	product, err := r.Db.GetCategory(ctx, id)
+	product, err := r.db.GetCategory(ctx, id)
 
 	if err != nil {
 		return database.Category{}, err
@@ -32,7 +32,7 @@ func (r CatalogRepository) GetOneCategoryById(ctx context.Context, id int64) (da
 
 func (r CatalogRepository) InsertCategory(ctx context.Context, category database.Category) (database.Category, error) {
 
-	insertedCategory, err := r.Db.CreateCategory(ctx, database.CreateCategoryParams{
+	insertedCategory, err := r.db.CreateCategory(ctx, database.CreateCategoryParams{
 		Name:      category.Name,
 		SectionID: category.SectionID,
 	})
@@ -44,7 +44,7 @@ func (r CatalogRepository) InsertCategory(ctx context.Context, category database
 }
 
 func (r CatalogRepository) ListSections(ctx context.Context) ([]database.Section, error) {
-	sections, err := r.Db.ListSections(ctx)
+	sections, err := r.db.ListSections(ctx)
 	if err != nil {
 		return []database.Section{}, err
 
@@ -54,7 +54,7 @@ func (r CatalogRepository) ListSections(ctx context.Context) ([]database.Section
 }
 
 func (r CatalogRepository) GetOneSectionById(ctx context.Context, id int64) (database.Section, error) {
-	section, err := r.Db.GetSection(ctx, id)
+	section, err := r.db.GetSection(ctx, id)
 
 	if err != nil {
 		return database.Section{}, err
@@ -66,7 +66,7 @@ func (r CatalogRepository) GetOneSectionById(ctx context.Context, id int64) (dat
 
 func (r CatalogRepository) InsertSection(ctx context.Context, section database.Section) (database.Section, error) {
 
-	insertedSection, err := r.Db.CreateSection(ctx, section.Name)
+	insertedSection, err := r.db.CreateSection(ctx, section.Name)
 	if err != nil {
 		return database.Section{}, err
 	}
@@ -75,7 +75,7 @@ func (r CatalogRepository) InsertSection(ctx context.Context, section database.S
 }
 
 func (r CatalogRepository) ListProducts(ctx context.Context) ([]database.Product, error) {
-	products, err := r.Db.ListProducts(ctx)
+	products, err := r.db.ListProducts(ctx)
 	if err != nil {
 		return []database.Product{}, err
 
@@ -85,7 +85,7 @@ func (r CatalogRepository) ListProducts(ctx context.Context) ([]database.Product
 }
 
 func (r CatalogRepository) GetOneProductById(ctx context.Context, id int64) (database.Product, error) {
-	product, err := r.Db.GetProduct(ctx, id)
+	product, err := r.db.GetProduct(ctx, id)
 
 	if err != nil {
 		return database.Product{}, err
@@ -97,7 +97,7 @@ func (r CatalogRepository) GetOneProductById(ctx context.Context, id int64) (dat
 
 func (r CatalogRepository) InsertProduct(ctx context.Context, product database.Product) (database.Product, error) {
 
-	insertedProduct, err := r.Db.CreateProduct(ctx, database.CreateProductParams{
+	insertedProduct, err := r.db.CreateProduct(ctx, database.CreateProductParams{
 		Name:  product.Name,
 		Abbr:  product.Abbr,
 		Price: product.Price,
@@ -110,7 +110,7 @@ func (r CatalogRepository) InsertProduct(ctx context.Context, product database.P
 }
 
 func (r CatalogRepository) ListVariants(ctx context.Context) ([]database.Variant, error) {
-	variants, err := r.Db.ListVariants(ctx)
+	variants, err := r.db.ListVariants(ctx)
 	if err != nil {
 		return []database.Variant{}, err
 
@@ -120,7 +120,7 @@ func (r CatalogRepository) ListVariants(ctx context.Context) ([]database.Variant
 }
 
 func (r CatalogRepository) GetOneVariantById(ctx context.Context, id int64) (database.Variant, error) {
-	variant, err := r.Db.GetVariant(ctx, id)
+	variant, err := r.db.GetVariant(ctx, id)
 
 	if err != nil {
 		return database.Variant{}, err
@@ -132,7 +132,7 @@ func (r CatalogRepository) GetOneVariantById(ctx context.Context, id int64) (dat
 
 func (r CatalogRepository) InsertVariant(ctx context.Context, variant database.Variant) (database.Variant, error) {
 
-	insertedVariant, err := r.Db.CreateVariant(ctx, database.CreateVariantParams{
+	insertedVariant, err := r.db.CreateVariant(ctx, database.CreateVariantParams{
 		Name:  variant.Name,
 		Price: variant.Price,
 	})
@@ -141,4 +141,8 @@ func (r CatalogRepository) InsertVariant(ctx context.Context, variant database.V
 	}
 
 	return insertedVariant, nil
+}
+
+func NewCatalogRepository(db *database.Queries) CatalogRepository {
+	return CatalogRepository{db: db}
 }

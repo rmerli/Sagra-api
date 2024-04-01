@@ -1,27 +1,25 @@
 package category
 
 import (
-	"gtmx/src/view/layout"
 	"fmt"
 	"gtmx/src/database"
+	"gtmx/src/router/routes"
 )
 
 templ NewView(sections []database.Section) {
-	@layout.Base() {
-		<div class="text-center">
-			Create New Category
+	<div class="text-center">
+		Create New Category
+	</div>
+	<form action={ templ.URL(routes.GetPath("create-category")) } method="POST">
+		<div>
+			<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
+			<select name="section_id" class="select select-bordered w-full max-w-xs">
+				<option disabled selected>Section</option>
+				for _, section := range sections {
+					<option value={ fmt.Sprintf("%d", section.ID) }>{ section.Name }</option>
+				}
+			</select>
 		</div>
-		<form action="/category/create" method="POST">
-			<div>
-				<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
-				<select name="section_id" class="select select-bordered w-full max-w-xs">
-					<option disabled selected>Section</option>
-					for _, section := range sections {
-						<option value={ fmt.Sprintf("%d", section.ID) }>{ section.Name }</option>
-					}
-				</select>
-			</div>
-			<button class="btn input-bordered">Create</button>
-		</form>
-	}
+		<button class="btn input-bordered">Create</button>
+	</form>
 }

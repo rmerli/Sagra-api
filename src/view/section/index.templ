@@ -1,17 +1,15 @@
 package section
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/database"
+	"gtmx/src/router/routes"
 )
 
 templ IndexView(sections []database.Section) {
-	@layout.Base() {
-		<div class="text-right">
-			<a href="/section/new"><button class="btn btn-primary">New Section</button></a>
-		</div>
-		for _, section := range sections {
-			<h1>Section: { section.Name }</h1>
-		}
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath("new-section")) }><button class="btn btn-primary">New Section</button></a>
+	</div>
+	for _, section := range sections {
+		<h1>Section: { section.Name }</h1>
 	}
 }

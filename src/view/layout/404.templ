@@ -1,0 +1,16 @@
+package layout
+
+templ NotFound() {
+	<html class="dark">
+		<head>
+			<link rel="stylesheet" href="/static/css/tailwind.min.css"/>
+		</head>
+		<body>
+			<container class="container mx-auto">
+				<div class="text-center py-8 px-4 sm:px-6 lg:px-8">
+					{ children... }
+				</div>
+			</container>
+		</body>
+	</html>
+}

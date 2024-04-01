@@ -5,6 +5,9 @@ import (
 	"gtmx/src/database"
 	"gtmx/src/database/repository"
 	"gtmx/src/model"
+	"gtmx/src/router/routes"
+	"gtmx/src/service/auth"
+	"gtmx/src/view/layout"
 	"gtmx/src/view/variant"
 	"math/big"
 	"net/http"
@@ -19,16 +22,26 @@ type VariantHandler struct {
 }
 
 func (h VariantHandler) HandleIndex(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	variants, err := h.Repo.ListVariants(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, variant.IndexView(variants))
+	return render(c, layout.ProtectedViews(user, variant.IndexView(variants)))
 }
 
 func (h VariantHandler) HandleShow(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	idString := c.Param("id")
 
 	id, err := strconv.ParseInt(idString, 10, 64)
@@ -43,11 +56,16 @@ func (h VariantHandler) HandleShow(c echo.Context) error {
 
 	viewVariant, err := model.Variant{}.FromDatabase(p)
 
-	return render(c, variant.ShowView(viewVariant))
+	return render(c, layout.ProtectedViews(user, variant.ShowView(viewVariant)))
 }
 
 func (h VariantHandler) HandleNew(c echo.Context) error {
-	return render(c, variant.NewView())
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	return render(c, layout.ProtectedViews(user, variant.NewView()))
 }
 
 func (h VariantHandler) HandleCreate(c echo.Context) error {
@@ -69,7 +87,7 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("/variant/%d", insertedVariant.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-variant"), insertedVariant.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

@@ -1,15 +1,12 @@
 package variant
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/model"
 )
 
 templ ShowView(variant model.Variant) {
-	@layout.Base() {
-		<div class="text-center">
-			<h1>Variant: { variant.Name }</h1>
-			<h1>Price: { variant.Price }</h1>
-		</div>
-	}
+	<div class="text-center">
+		<h1>Variant: { variant.Name }</h1>
+		<h1>Price: { variant.Price }</h1>
+	</div>
 }

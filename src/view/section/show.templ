@@ -1,14 +1,11 @@
 package section
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/model"
 )
 
 templ ShowView(section model.Section) {
-	@layout.Base() {
-		<div class="text-center">
-			<h1>Section: { section.Name }</h1>
-		</div>
-	}
+	<div class="text-center">
+		<h1>Section: { section.Name }</h1>
+	</div>
 }

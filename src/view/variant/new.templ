@@ -1,22 +1,20 @@
 package variant
 
 import (
-	"gtmx/src/view/layout"
+	"gtmx/src/router/routes"
 )
 
 templ NewView() {
-	@layout.Base() {
-		<div class="text-center">
-			Create New Variant
+	<div class="text-center">
+		Create New Variant
+	</div>
+	<form action={ templ.URL(routes.GetPath("create-variant")) } method="POST">
+		<div>
+			<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
 		</div>
-		<form action="/variant/create" method="POST">
-			<div>
-				<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
-			</div>
-			<div>
-				<input type="number" step="0.01" name="price" placeholder="Price" class="input input-bordered w-full max-w-xs"/>
-			</div>
-			<button class="btn input-bordered">Create</button>
-		</form>
-	}
+		<div>
+			<input type="number" step="0.01" name="price" placeholder="Price" class="input input-bordered w-full max-w-xs"/>
+		</div>
+		<button class="btn input-bordered">Create</button>
+	</form>
 }

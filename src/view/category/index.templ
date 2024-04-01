@@ -1,17 +1,15 @@
 package category
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/database"
+	"gtmx/src/router/routes"
 )
 
 templ IndexView(categories []database.Category) {
-	@layout.Base() {
-		<div class="text-right">
-			<a href="/category/new"><button class="btn btn-primary">New Category</button></a>
-		</div>
-		for _, category := range categories {
-			<h1>Category: { category.Name }</h1>
-		}
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath("new-category")) }><button class="btn btn-primary">New Category</button></a>
+	</div>
+	for _, category := range categories {
+		<h1>Category: { category.Name }</h1>
 	}
 }

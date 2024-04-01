@@ -1,16 +1,13 @@
 package product
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/model"
 )
 
 templ ShowView(product model.Product) {
-	@layout.Base() {
-		<div class="text-center">
-			<h1>Product: { product.Name }</h1>
-			<h1>Abbreviation: { product.Abbr }</h1>
-			<h1>Price: { product.Price }</h1>
-		</div>
-	}
+	<div class="text-center">
+		<h1>Product: { product.Name }</h1>
+		<h1>Abbreviation: { product.Abbr }</h1>
+		<h1>Price: { product.Price }</h1>
+	</div>
 }

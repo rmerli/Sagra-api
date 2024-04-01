@@ -1,14 +1,11 @@
 package category
 
 import (
-	"gtmx/src/view/layout"
 	"gtmx/src/model"
 )
 
 templ ShowView(category model.Category) {
-	@layout.Base() {
-		<div class="text-center">
-			<h1>Category: { category.Name }</h1>
-		</div>
-	}
+	<div class="text-center">
+		<h1>Category: { category.Name }</h1>
+	</div>
 }

@@ -5,7 +5,10 @@ import (
 	"gtmx/src/database"
 	"gtmx/src/database/repository"
 	"gtmx/src/model"
+	"gtmx/src/router/routes"
+	"gtmx/src/service/auth"
 	"gtmx/src/view/category"
+	"gtmx/src/view/layout"
 	"net/http"
 	"strconv"
 
@@ -18,16 +21,26 @@ type CategoryHandler struct {
 }
 
 func (h CategoryHandler) HandleIndex(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	categories, err := h.Repo.ListCategories(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, category.IndexView(categories))
+	return render(c, layout.ProtectedViews(user, category.IndexView(categories)))
 }
 
 func (h CategoryHandler) HandleShow(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	idString := c.Param("id")
 
 	id, err := strconv.ParseInt(idString, 10, 64)
@@ -42,15 +55,20 @@ func (h CategoryHandler) HandleShow(c echo.Context) error {
 
 	viewCategory, err := model.Category{}.FromDatabase(p)
 
-	return render(c, category.ShowView(viewCategory))
+	return render(c, layout.ProtectedViews(user, category.ShowView(viewCategory)))
 }
 
 func (h CategoryHandler) HandleNew(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
 	sections, err := h.Repo.ListSections(c.Request().Context())
 	if err != nil {
 		return err
 	}
-	return render(c, category.NewView(sections))
+	return render(c, layout.ProtectedViews(user, category.NewView(sections)))
 }
 
 func (h CategoryHandler) HandleCreate(c echo.Context) error {
@@ -70,7 +88,7 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("/category/%d", insertedCategory.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-category"), insertedCategory.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }
