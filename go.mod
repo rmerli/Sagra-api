@@ -4,8 +4,10 @@ go 1.21.5
 
 require (
 	github.com/a-h/templ v0.2.543
-	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/antonlindstrom/pgstore v0.0.0-20220421113606-e3a6e3fed12a
+	github.com/gorilla/context v1.1.2
 	github.com/jackc/pgx/v5 v5.5.3
+	github.com/labstack/echo-contrib v0.16.0
 	github.com/labstack/echo/v4 v4.11.4
 )
 
@@ -13,12 +15,10 @@ require (
 	github.com/antonlindstrom/pgstore v0.0.0-20220421113606-e3a6e3fed12a // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.2.2 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/labstack/echo-contrib v0.16.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lib/pq v1.10.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
