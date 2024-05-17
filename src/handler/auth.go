@@ -1,35 +1,46 @@
 package handler
 
 import (
+	"fmt"
 	"gtmx/src/router/routes"
 	authentication "gtmx/src/service/auth"
+	"gtmx/src/validator"
 	"gtmx/src/view/auth"
 	"log"
 	"net/http"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
 	AuthService authentication.AuthService
 }
 
-func (h AuthHandler) HandleSignIn(c echo.Context) error {
-	email := c.FormValue("email")
-	password := c.FormValue("password")
+func (h AuthHandler) HandleSignUp(c echo.Context) error {
+	bag := validator.SignUp{
+		Email:    c.FormValue("email"),
+		Password: c.FormValue("password"),
+	}
+	err := bag.Validate(c.Request().Context(), h.AuthService.GetRepository())
 
-	_, err := h.AuthService.RegisterUser(c.Request().Context(), email, password)
+	if err != nil {
+		return render(c, auth.RegisterView(bag))
+	}
+
+	_, err = h.AuthService.RegisterUser(c.Request().Context(), bag.Email, bag.Password)
 
 	if err != nil {
 		return err
 	}
 
-	return nil
+	//fix error when ridirect it automatically logs in
+	return c.Redirect(http.StatusTemporaryRedirect, routes.GetPath("login"))
 }
 
-func (h AuthHandler) HandleRegister(c echo.Context) error {
-	return render(c, auth.RegisterView())
+func (h AuthHandler) HandleShowSignUp(c echo.Context) error {
+	return render(c, auth.RegisterView(validator.SignUp{}))
 }
 
 func (h AuthHandler) HandleShowLogin(c echo.Context) error {
@@ -73,7 +84,9 @@ func (h AuthHandler) HandleLogin(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
 	}
 
-	if user.Password != password {
+	check := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(fmt.Sprintf("%s%s", password, user.Salt)))
+
+	if check != nil {
 		log.Println("wrong password")
 		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
 	}

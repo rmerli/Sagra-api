@@ -36,6 +36,7 @@ type User struct {
 	ID       int64
 	Email    string
 	Password string
+	Salt     string
 }
 
 type Variant struct {

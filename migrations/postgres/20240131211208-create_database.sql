@@ -37,7 +37,8 @@ CREATE TABLE products_variants (
 CREATE TABLE users (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	email text NOT NULL UNIQUE,
-	password text NOT NULL
+	password text NOT NULL,
+	salt text NOT NULL
 );
 
 -- +migrate Down

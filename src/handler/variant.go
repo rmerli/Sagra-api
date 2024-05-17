@@ -74,7 +74,6 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 
 	if err != nil {
 		return err
-
 	}
 
 	p := database.Variant{

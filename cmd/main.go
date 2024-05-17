@@ -17,6 +17,9 @@ func main() {
 	ctx := context.Background()
 	// db, err := sql.Open("postgres", "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable")
 	conn, err := pgx.Connect(ctx, "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable")
+	if err != nil {
+		return
+	}
 
 	store, err := pgstore.NewPGStore("postgres://sagra:sagra@localhost/sagra_go?sslmode=disable", []byte("secret-key"))
 	gob.Register(database.User{})

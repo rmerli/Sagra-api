@@ -35,8 +35,8 @@ func (r *Router) SetRoutes() {
 	authService := auth.NewAuthService(userRepo)
 
 	authHandler := handler.AuthHandler{AuthService: authService}
-	r.app.GET("/signin", authHandler.HandleRegister).Name = "show-sign-in"
-	r.app.POST("/signin", authHandler.HandleSignIn).Name = "sign-in"
+	r.app.GET("/signup", authHandler.HandleShowSignUp).Name = "show-sign-up"
+	r.app.POST("/signup", authHandler.HandleSignUp).Name = "sign-up"
 	r.app.GET("/login", authHandler.HandleShowLogin).Name = "show-login"
 	r.app.POST("/login", authHandler.HandleLogin).Name = "login"
 	r.app.GET("/logout", authHandler.HandleLogout).Name = "logout"

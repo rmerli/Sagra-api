@@ -1,0 +1,27 @@
+package auth
+
+import (
+	"gtmx/src/view/layout"
+	"gtmx/src/validator"
+)
+
+templ RegisterView(bag validator.SignUp) {
+	@layout.Login() {
+		<div class="text-center">
+			Register
+		</div>
+		<form action="/signup" method="POST">
+			<div>
+				if val, ok := bag.Errors["email"]; ok {
+					<span>{ val }</span>
+					<input type="email" name="email" value={ bag.Email } placeholder="Email" class="input input-bordered w-full max-w-xs"/>
+					<input type="password" name="password" value={ bag.Password } placeholder="Password" class="input input-bordered w-full max-w-xs"/>
+				} else {
+					<input type="email" name="email" placeholder="Email" class="input input-bordered w-full max-w-xs"/>
+					<input type="password" name="password" placeholder="Password" class="input input-bordered w-full max-w-xs"/>
+				}
+			</div>
+			<button class="btn input-bordered">Sign In</button>
+		</form>
+	}
+}

@@ -14,6 +14,7 @@ func (r UserRepository) InsertUser(ctx context.Context, user database.User) (dat
 	insertedUser, err := r.db.CreateUser(ctx, database.CreateUserParams{
 		Email:    user.Email,
 		Password: user.Password,
+		Salt:     user.Salt,
 	})
 
 	if err != nil {

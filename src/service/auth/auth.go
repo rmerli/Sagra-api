@@ -2,24 +2,49 @@ package auth
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
 	"gtmx/src/database"
 	"gtmx/src/database/repository"
+	"math/big"
+	"math/rand"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
 	repository repository.UserRepository
 }
+type ValidationError struct {
+	Key     string
+	Message string
+}
+
+func (e *ValidationError) Error() string {
+	return e.Message
+}
 
 func (s AuthService) RegisterUser(ctx context.Context, email string, password string) (database.User, error) {
-	user := database.User{
-		Email:    email,
-		Password: password,
+	hash := md5.Sum(big.NewInt(rand.Int63()).Bytes())
+	salt := hex.EncodeToString(hash[:])
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("%s%s", password, salt)), 8)
+
+	if err != nil {
+		log.Error(err)
+		return database.User{}, err
 	}
 
-	user, err := s.repository.InsertUser(ctx, user)
+	user := database.User{
+		Email:    email,
+		Password: string(hashedPassword),
+		Salt:     salt,
+	}
+
+	user, err = s.repository.InsertUser(ctx, user)
 	if err != nil {
 		return database.User{}, err
 	}
