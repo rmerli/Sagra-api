@@ -19,7 +19,7 @@ func Authenticated(next echo.HandlerFunc) echo.HandlerFunc {
 
 		_, ok := session.Values["user"]
 		if !ok {
-			return c.Redirect(http.StatusMovedPermanently, routes.GetPath("show-login"))
+			return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.SHOW_LOGIN))
 		}
 
 		return next(c)

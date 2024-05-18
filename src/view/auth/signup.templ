@@ -3,6 +3,7 @@ package auth
 import (
 	"gtmx/src/view/layout"
 	"gtmx/src/validator"
+	"gtmx/src/server/routes"
 )
 
 templ RegisterView(bag validator.SignUp) {
@@ -10,7 +11,7 @@ templ RegisterView(bag validator.SignUp) {
 		<div class="text-center">
 			Register
 		</div>
-		<form action="/signup" method="POST">
+		<form action={ templ.URL(routes.GetPath(routes.SIGN_UP)) } method="POST">
 			<div>
 				if val, ok := bag.Errors["email"]; ok {
 					<span>{ val }</span>

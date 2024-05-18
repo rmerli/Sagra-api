@@ -10,7 +10,7 @@ templ LoginView() {
 		<div class="text-center">
 			Login
 		</div>
-		<form action={ templ.URL(routes.GetPath("login")) } method="POST">
+		<form action={ templ.URL(routes.GetPath(routes.LOGIN)) } method="POST">
 			<div>
 				<input type="email" name="email" placeholder="Email" class="input input-bordered w-full max-w-xs"/>
 				<input type="password" name="password" placeholder="Password" class="input input-bordered w-full max-w-xs"/>

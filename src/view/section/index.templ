@@ -7,7 +7,7 @@ import (
 
 templ IndexView(sections []database.Section) {
 	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath("new-section")) }><button class="btn btn-primary">New Section</button></a>
+		<a href={ templ.URL(routes.GetPath(routes.NEW_SECTION)) }><button class="btn btn-primary">New Section</button></a>
 	</div>
 	for _, section := range sections {
 		<h1>Section: { section.Name }</h1>

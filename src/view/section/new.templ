@@ -8,7 +8,7 @@ templ NewView() {
 	<div class="text-center">
 		Create New Section
 	</div>
-	<form action={ templ.URL(routes.GetPath("create-section")) } method="POST">
+	<form action={ templ.URL(routes.GetPath(routes.CREATE_SECTION)) } method="POST">
 		<div>
 			<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
 		</div>

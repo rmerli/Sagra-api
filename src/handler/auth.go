@@ -26,6 +26,7 @@ func (h AuthHandler) HandleSignUp(c echo.Context) error {
 	err := bag.Validate(c.Request().Context(), h.AuthService.GetRepository())
 
 	if err != nil {
+		c.Response().Status = 400
 		return render(c, auth.RegisterView(bag))
 	}
 
@@ -35,8 +36,7 @@ func (h AuthHandler) HandleSignUp(c echo.Context) error {
 		return err
 	}
 
-	//fix error when ridirect it automatically logs in
-	return c.Redirect(http.StatusTemporaryRedirect, routes.GetPath("login"))
+	return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
 }
 
 func (h AuthHandler) HandleShowSignUp(c echo.Context) error {
@@ -53,7 +53,7 @@ func (h AuthHandler) HandleShowLogin(c echo.Context) error {
 	_, ok := session.Values["user"]
 
 	if ok {
-		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("index-product"))
+		return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.INDEX_PRODUCT))
 	}
 
 	return render(c, auth.LoginView())
@@ -71,7 +71,7 @@ func (h AuthHandler) HandleLogin(c echo.Context) error {
 	_, ok := session.Values["user"]
 
 	if ok {
-		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("index-product"))
+		return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.INDEX_PRODUCT))
 	}
 
 	email := c.FormValue("email")
@@ -81,24 +81,24 @@ func (h AuthHandler) HandleLogin(c echo.Context) error {
 
 	if err != nil {
 		log.Println(err.Error())
-		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
+		return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
 	}
 
 	check := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(fmt.Sprintf("%s%s", password, user.Salt)))
 
 	if check != nil {
 		log.Println("wrong password")
-		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
+		return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
 	}
 
 	session.Values["user"] = user
 
 	if err = session.Save(r, w); err != nil {
 		log.Fatalf("Error saving session: %v", err)
-		return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
+		return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, routes.GetPath("index-product"))
+	return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.INDEX_PRODUCT))
 }
 
 func (h AuthHandler) HandleLogout(c echo.Context) error {
@@ -116,5 +116,5 @@ func (h AuthHandler) HandleLogout(c echo.Context) error {
 		log.Fatalf("Error saving session: %v", err)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, routes.GetPath("login"))
+	return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
 }

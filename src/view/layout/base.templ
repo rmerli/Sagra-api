@@ -15,22 +15,22 @@ templ Sidebar(user database.User) {
 					</a>
 				</li>
 				<li>
-					<a href={ templ.URL(routes.GetPath("index-section")) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+					<a href={ templ.URL(routes.GetPath(routes.INDEX_SECTION)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 						<span class="flex-1 ms-3 whitespace-nowrap">Sections</span>
 					</a>
 				</li>
 				<li>
-					<a href={ templ.URL(routes.GetPath("index-category")) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+					<a href={ templ.URL(routes.GetPath(routes.INDEX_CATEGORY)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 						<span class="flex-1 ms-3 whitespace-nowrap">Categories</span>
 					</a>
 				</li>
 				<li>
-					<a href={ templ.URL(routes.GetPath("index-product")) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+					<a href={ templ.URL(routes.GetPath(routes.INDEX_PRODUCT)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 						<span class="flex-1 ms-3 whitespace-nowrap">Products</span>
 					</a>
 				</li>
 				<li>
-					<a href={ templ.URL(routes.GetPath("index-variant")) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+					<a href={ templ.URL(routes.GetPath(routes.INDEX_VARIANT)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 						<span class="flex-1 ms-3 whitespace-nowrap">Variants</span>
 					</a>
 				</li>

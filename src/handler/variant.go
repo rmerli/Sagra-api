@@ -86,7 +86,7 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-variant"), insertedVariant.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_VARIANT), insertedVariant.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

@@ -10,7 +10,7 @@ templ NewView(sections []database.Section) {
 	<div class="text-center">
 		Create New Category
 	</div>
-	<form action={ templ.URL(routes.GetPath("create-category")) } method="POST">
+	<form action={ templ.URL(routes.GetPath(routes.CREATE_CATEGORY)) } method="POST">
 		<div>
 			<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs"/>
 			<select name="section_id" class="select select-bordered w-full max-w-xs">

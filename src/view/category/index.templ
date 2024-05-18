@@ -7,7 +7,7 @@ import (
 
 templ IndexView(categories []database.Category) {
 	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath("new-category")) }><button class="btn btn-primary">New Category</button></a>
+		<a href={ templ.URL(routes.GetPath(routes.NEW_CATEGORY)) }><button class="btn btn-primary">New Category</button></a>
 	</div>
 	for _, category := range categories {
 		<h1>Category: { category.Name }</h1>

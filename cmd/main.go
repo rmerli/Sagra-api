@@ -8,7 +8,6 @@ import (
 	"gtmx/src/server"
 	"log"
 	"os"
-	"os/signal"
 	"time"
 
 	"github.com/antonlindstrom/pgstore"
@@ -16,18 +15,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func run(
-	ctx context.Context, getenv func(string) string) error {
-
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
-	defer cancel()
-
+func run(ctx context.Context, getenv func(string) string) error {
 	conn, err := pgx.Connect(ctx, getenv("DB_URL"))
 	if err != nil {
 		return err
 	}
 
-	store, err := pgstore.NewPGStore("DB_URL", []byte(getenv("STORE_KEY")))
+	store, err := pgstore.NewPGStore(getenv("DB_URL"), []byte(getenv("STORE_KEY")))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -40,9 +34,8 @@ func run(
 
 	db := database.New(conn)
 
-	server := server.New(db, store)
-	server.SetRoutes()
-
+	serverReady := make(chan bool)
+	server := server.New(db, store, serverReady)
 	return server.Start(fmt.Sprintf("%s:%s", getenv("ADDRESS"), getenv("PORT")))
 }
 

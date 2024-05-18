@@ -45,7 +45,7 @@ func Sidebar(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(routes.GetPath("index-section"))
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(routes.GetPath(routes.INDEX_SECTION))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -54,7 +54,7 @@ func Sidebar(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 templ.SafeURL = templ.URL(routes.GetPath("index-category"))
+		var templ_7745c5c3_Var4 templ.SafeURL = templ.URL(routes.GetPath(routes.INDEX_CATEGORY))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var4)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -63,7 +63,7 @@ func Sidebar(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 templ.SafeURL = templ.URL(routes.GetPath("index-product"))
+		var templ_7745c5c3_Var5 templ.SafeURL = templ.URL(routes.GetPath(routes.INDEX_PRODUCT))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var5)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -72,7 +72,7 @@ func Sidebar(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 templ.SafeURL = templ.URL(routes.GetPath("index-variant"))
+		var templ_7745c5c3_Var6 templ.SafeURL = templ.URL(routes.GetPath(routes.INDEX_VARIANT))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var6)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

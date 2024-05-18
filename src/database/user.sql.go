@@ -33,6 +33,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const deleteUsers = `-- name: DeleteUsers :exec
+TRUNCATE TABLE users
+`
+
+func (q *Queries) DeleteUsers(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, deleteUsers)
+	return err
+}
+
 const getUser = `-- name: GetUser :one
 SELECT id, email, password, salt FROM users
 WHERE email = $1 LIMIT 1

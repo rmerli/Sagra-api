@@ -6,6 +6,7 @@ import (
 	"gtmx/src/database/repository"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
+	"gtmx/src/service"
 	"gtmx/src/service/auth"
 	"gtmx/src/view/layout"
 	"gtmx/src/view/section"
@@ -16,7 +17,8 @@ import (
 )
 
 type SectionHandler struct {
-	Repo *repository.CatalogRepository
+	Repo    *repository.SectionRepository
+	Service *service.Section
 }
 
 func (h SectionHandler) HandleIndex(c echo.Context) error {
@@ -79,7 +81,7 @@ func (h SectionHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-section"), insertedSection.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_SECTION), insertedSection.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

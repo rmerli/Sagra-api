@@ -88,7 +88,7 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath("index-category"), insertedCategory.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_CATEGORY), insertedCategory.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

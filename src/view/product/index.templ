@@ -7,7 +7,7 @@ import (
 
 templ IndexView(products []database.Product) {
 	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath("new-product")) }><button class="btn btn-primary">New Product</button></a>
+		<a href={ templ.URL(routes.GetPath(routes.NEW_PRODUCT)) }><button class="btn btn-primary">New Product</button></a>
 	</div>
 	for _, product := range products {
 		<h1>Product: { product.Name }</h1>

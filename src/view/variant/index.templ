@@ -7,7 +7,7 @@ import (
 
 templ IndexView(variants []database.Variant) {
 	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath("new-variant")) }><button class="btn btn-primary">New Variant</button></a>
+		<a href={ templ.URL(routes.GetPath(routes.NEW_VARIANT)) }><button class="btn btn-primary">New Variant</button></a>
 	</div>
 	for _, variant := range variants {
 		<h1>Variant: { variant.Name }</h1>

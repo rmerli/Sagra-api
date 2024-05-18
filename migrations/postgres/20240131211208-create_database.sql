@@ -1,17 +1,17 @@
 -- +migrate Up
-CREATE TABLE sections (
+CREATE TABLE IF NOT EXISTS sections (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	name text NOT NULL
 );
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	name text NOT NULL,
 	section_id BIGINT, 
 	CONSTRAINT fk_section FOREIGN KEY(section_id) REFERENCES sections(id)
 );
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
 	id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	name text NOT NULL,
 	abbr text NOT NULL,
@@ -20,13 +20,13 @@ CREATE TABLE products (
 	CONSTRAINT fk_category FOREIGN KEY(category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE variants (
+CREATE TABLE IF NOT EXISTS variants (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	name TEXT NOT NULL,
 	price NUMERIC(6,2) NOT NULL
 );
 
-CREATE TABLE products_variants (
+CREATE TABLE IF NOT EXISTS products_variants (
 	product_id BIGINT, 
 	variant_id BIGINT, 
 	PRIMARY KEY(product_id, variant_id),
@@ -34,7 +34,7 @@ CREATE TABLE products_variants (
 	CONSTRAINT fk_variant FOREIGN KEY(variant_id) REFERENCES variants(id)
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
 	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 	email text NOT NULL UNIQUE,
 	password text NOT NULL,
@@ -42,9 +42,9 @@ CREATE TABLE users (
 );
 
 -- +migrate Down
-DROP table users;
-DROP table products_variants;
-DROP table variants;
-DROP table products;
-DROP table categories;
-DROP table sections;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS products_variants;
+DROP TABLE IF EXISTS variants;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS sections;
