@@ -12,7 +12,7 @@ import "bytes"
 
 import (
 	"gtmx/src/database"
-	"gtmx/src/router/routes"
+	"gtmx/src/server/routes"
 )
 
 func Sidebar(user database.User) templ.Component {

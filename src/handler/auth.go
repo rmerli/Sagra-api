@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"gtmx/src/router/routes"
+	"gtmx/src/server/routes"
 	authentication "gtmx/src/service/auth"
 	"gtmx/src/validator"
 	"gtmx/src/view/auth"

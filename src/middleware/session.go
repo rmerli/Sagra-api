@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"gtmx/src/router/routes"
+	"gtmx/src/server/routes"
 	"net/http"
 
 	"github.com/gorilla/context"

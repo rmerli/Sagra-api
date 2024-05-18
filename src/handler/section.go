@@ -5,7 +5,7 @@ import (
 	"gtmx/src/database"
 	"gtmx/src/database/repository"
 	"gtmx/src/model"
-	"gtmx/src/router/routes"
+	"gtmx/src/server/routes"
 	"gtmx/src/service/auth"
 	"gtmx/src/view/layout"
 	"gtmx/src/view/section"

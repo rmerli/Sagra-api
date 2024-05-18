@@ -3,44 +3,63 @@ package main
 import (
 	"context"
 	"encoding/gob"
+	"fmt"
 	"gtmx/src/database"
-	"gtmx/src/router"
+	"gtmx/src/server"
 	"log"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/antonlindstrom/pgstore"
 	"github.com/jackc/pgx/v5"
-	"github.com/labstack/echo/v4"
+	"github.com/joho/godotenv"
 )
 
-func main() {
-	ctx := context.Background()
-	// db, err := sql.Open("postgres", "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable")
-	conn, err := pgx.Connect(ctx, "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable")
+func run(
+	ctx context.Context, getenv func(string) string) error {
+
+	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	defer cancel()
+
+	conn, err := pgx.Connect(ctx, getenv("DB_URL"))
 	if err != nil {
-		return
+		return err
 	}
 
-	store, err := pgstore.NewPGStore("postgres://sagra:sagra@localhost/sagra_go?sslmode=disable", []byte("secret-key"))
-	gob.Register(database.User{})
+	store, err := pgstore.NewPGStore("DB_URL", []byte(getenv("STORE_KEY")))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
+
 	defer store.Close()
 
-	// Run a background goroutine to clean up expired sessions from the database.
-	defer store.StopCleanup(store.Cleanup(time.Minute * 5))
+	gob.Register(database.User{})
 
-	queries := database.New(conn)
+	defer store.StopCleanup(store.Cleanup(time.Minute * 60 * 24))
 
-	if err != nil {
-		println(err.Error())
-		return
+	db := database.New(conn)
+
+	server := server.New(db, store)
+	server.SetRoutes()
+
+	return server.Start(fmt.Sprintf("%s:%s", getenv("ADDRESS"), getenv("PORT")))
+}
+
+func main() {
+	ctx := context.Background()
+
+	env := os.Getenv("ENV")
+	if env == "" {
+		err := godotenv.Load(".env-local")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
 	}
 
-	app := echo.New()
-	router := router.New(app, queries, store)
-	router.SetRoutes()
-
-	app.Logger.Fatal(app.Start(":8080"))
+	if err := run(ctx, os.Getenv); err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
 }
