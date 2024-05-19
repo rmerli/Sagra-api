@@ -2,18 +2,15 @@ package handler
 
 import (
 	"fmt"
-	"gtmx/src/database"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
 	"gtmx/src/service/auth"
 	"gtmx/src/view"
 	"gtmx/src/view/layout"
-	"math/big"
 	"net/http"
 	"strconv"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 )
 
@@ -49,14 +46,12 @@ func (h VariantHandler) HandleShow(c echo.Context) error {
 		return err
 	}
 
-	p, err := h.variantService.Get(c.Request().Context(), id)
+	variant, err := h.variantService.Get(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
 
-	viewVariant, err := model.Variant{}.FromDatabase(p)
-
-	return render(c, layout.ProtectedViews(user, view.ShowVariant(viewVariant)))
+	return render(c, layout.ProtectedViews(user, view.ShowVariant(variant)))
 }
 
 func (h VariantHandler) HandleNew(c echo.Context) error {
@@ -76,9 +71,9 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	p := database.Variant{
+	p := model.Variant{
 		Name:  c.FormValue("name"),
-		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
+		Price: price,
 	}
 
 	insertedVariant, err := h.variantService.Create(c.Request().Context(), p)
@@ -86,7 +81,7 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_VARIANT), insertedVariant.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_VARIANT), insertedVariant.Id)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }

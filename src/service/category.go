@@ -2,27 +2,27 @@ package service
 
 import (
 	"context"
-	"gtmx/src/database"
 	"gtmx/src/database/repository"
+	"gtmx/src/model"
 )
 
 type Category struct {
 	Repo *repository.CategoryRepository
 }
 
-func (s *Category) Update(ctx context.Context, category database.Category) (database.Category, error) {
+func (s *Category) Update(ctx context.Context, category model.Category) (model.Category, error) {
 	return s.Repo.Update(ctx, category)
 }
 
-func (s *Category) Insert(ctx context.Context, category database.Category) (database.Category, error) {
+func (s *Category) Insert(ctx context.Context, category model.Category) (model.Category, error) {
 	return s.Repo.Insert(ctx, category)
 }
 
-func (s *Category) GetAll(ctx context.Context) ([]database.Category, error) {
+func (s *Category) GetAll(ctx context.Context) ([]model.Category, error) {
 	return s.Repo.List(ctx)
 }
 
-func (s *Category) Get(ctx context.Context, id int64) (database.Category, error) {
+func (s *Category) Get(ctx context.Context, id int64) (model.Category, error) {
 	return s.Repo.Get(ctx, id)
 }
 

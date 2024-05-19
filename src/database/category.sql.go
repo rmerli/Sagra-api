@@ -39,6 +39,43 @@ func (q *Queries) DeleteCategory(ctx context.Context, id int64) error {
 	return err
 }
 
+const getAllCategoryWithSection = `-- name: GetAllCategoryWithSection :many
+SELECT categories.id, categories.name, categories.section_id, sections.id, sections.name
+FROM categories
+JOIN sections ON categories.section_id = sections.id
+`
+
+type GetAllCategoryWithSectionRow struct {
+	Category Category
+	Section  Section
+}
+
+func (q *Queries) GetAllCategoryWithSection(ctx context.Context) ([]GetAllCategoryWithSectionRow, error) {
+	rows, err := q.db.Query(ctx, getAllCategoryWithSection)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllCategoryWithSectionRow
+	for rows.Next() {
+		var i GetAllCategoryWithSectionRow
+		if err := rows.Scan(
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.SectionID,
+			&i.Section.ID,
+			&i.Section.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategory = `-- name: GetCategory :one
 SELECT id, name, section_id FROM categories
 WHERE id = $1 LIMIT 1
@@ -48,6 +85,31 @@ func (q *Queries) GetCategory(ctx context.Context, id int64) (Category, error) {
 	row := q.db.QueryRow(ctx, getCategory, id)
 	var i Category
 	err := row.Scan(&i.ID, &i.Name, &i.SectionID)
+	return i, err
+}
+
+const getCategoryWithSection = `-- name: GetCategoryWithSection :one
+SELECT categories.id, categories.name, categories.section_id, sections.id, sections.name
+FROM categories
+JOIN sections ON categories.section_id = sections.id
+WHERE categories.id = $1 LIMIT 1
+`
+
+type GetCategoryWithSectionRow struct {
+	Category Category
+	Section  Section
+}
+
+func (q *Queries) GetCategoryWithSection(ctx context.Context, id int64) (GetCategoryWithSectionRow, error) {
+	row := q.db.QueryRow(ctx, getCategoryWithSection, id)
+	var i GetCategoryWithSectionRow
+	err := row.Scan(
+		&i.Category.ID,
+		&i.Category.Name,
+		&i.Category.SectionID,
+		&i.Section.ID,
+		&i.Section.Name,
+	)
 	return i, err
 }
 

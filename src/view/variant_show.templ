@@ -2,11 +2,12 @@ package view
 
 import (
 	"gtmx/src/model"
+	"fmt"
 )
 
 templ ShowVariant(variant model.Variant) {
 	<div class="text-center">
 		<h1>Variant: { variant.Name }</h1>
-		<h1>Price: { variant.Price }</h1>
+		<h1>Price: { fmt.Sprintf("%.2f", variant.Price) }</h1>
 	</div>
 }

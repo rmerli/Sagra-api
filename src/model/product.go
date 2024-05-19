@@ -1,10 +1,7 @@
 package model
 
 import (
-	"fmt"
 	"gtmx/src/database"
-	"math/big"
-	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -13,32 +10,32 @@ type Product struct {
 	Id    int64
 	Name  string
 	Abbr  string
-	Price string
+	Price float64
 }
 
-func (p Product) FromDatabase(product database.Product) (Product, error) {
-	price, err := product.Price.Float64Value()
-
-	if err != nil {
-		return Product{}, nil
-	}
-
+func NewProduct(id int64, name string, abbr string, price pgtype.Numeric) Product {
+	p, _ := price.Float64Value()
 	return Product{
-		Id:    product.ID,
-		Name:  product.Name,
-		Abbr:  product.Abbr,
-		Price: fmt.Sprintf("%.2f", price.Float64),
-	}, nil
+		Id:    id,
+		Name:  name,
+		Abbr:  abbr,
+		Price: p.Float64,
+	}
 }
 
-func (p Product) ToDatabase(product Product) database.Product {
-	price, _ := strconv.ParseFloat(product.Price, 64)
+func NewProductList(dbProducts []database.Product) []Product {
 
-	return database.Product{
-		ID:    product.Id,
-		Name:  product.Name,
-		Abbr:  product.Abbr,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
+	products := make([]Product, len(dbProducts))
+
+	for i, product := range dbProducts {
+		p, _ := product.Price.Float64Value()
+
+		products[i] = Product{
+			Id:    product.ID,
+			Name:  product.Name,
+			Abbr:  product.Abbr,
+			Price: p.Float64,
+		}
 	}
-
+	return products
 }

@@ -9,16 +9,20 @@ type Section struct {
 	Name string
 }
 
-func (p Section) FromDatabase(section database.Section) (Section, error) {
+func NewSection(id int64, name string) Section {
 	return Section{
-		Id:   section.ID,
-		Name: section.Name,
-	}, nil
+		Id:   id,
+		Name: name,
+	}
 }
 
-func (p Section) ToDatabase(section Section) database.Section {
-	return database.Section{
-		ID:   section.Id,
-		Name: section.Name,
+func NewSectionList(dbSections []database.Section) []Section {
+	sections := make([]Section, len(dbSections))
+	for i, section := range dbSections {
+		sections[i] = Section{
+			Id:   section.ID,
+			Name: section.Name,
+		}
 	}
+	return sections
 }

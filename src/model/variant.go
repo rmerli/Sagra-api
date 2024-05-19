@@ -1,10 +1,7 @@
 package model
 
 import (
-	"fmt"
 	"gtmx/src/database"
-	"math/big"
-	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -12,30 +9,29 @@ import (
 type Variant struct {
 	Id    int64
 	Name  string
-	Price string
+	Price float64
 }
 
-func (p Variant) FromDatabase(variant database.Variant) (Variant, error) {
-	price, err := variant.Price.Float64Value()
-
-	if err != nil {
-		return Variant{}, nil
-	}
-
+func NewVariant(id int64, name string, price pgtype.Numeric) Variant {
+	p, _ := price.Float64Value()
 	return Variant{
-		Id:    variant.ID,
-		Name:  variant.Name,
-		Price: fmt.Sprintf("%.2f", price.Float64),
-	}, nil
+		Id:    id,
+		Name:  name,
+		Price: p.Float64,
+	}
 }
 
-func (p Variant) ToDatabase(variant Variant) database.Variant {
-	price, _ := strconv.ParseFloat(variant.Price, 64)
+func NewVariantList(dbVariants []database.Variant) []Variant {
+	variants := make([]Variant, len(dbVariants))
 
-	return database.Variant{
-		ID:    variant.Id,
-		Name:  variant.Name,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
+	for i, variant := range dbVariants {
+		p, _ := variant.Price.Float64Value()
+
+		variants[i] = Variant{
+			Id:    variant.ID,
+			Name:  variant.Name,
+			Price: p.Float64,
+		}
 	}
-
+	return variants
 }

@@ -1,11 +1,11 @@
 package view
 
 import (
-	"gtmx/src/database"
+	"gtmx/src/model"
 	"gtmx/src/server/routes"
 )
 
-templ IndexVariant(variants []database.Variant) {
+templ IndexVariant(variants []model.Variant) {
 	<div class="text-right">
 		<a href={ templ.URL(routes.GetPath(routes.NEW_VARIANT)) }><button class="btn btn-primary">New Variant</button></a>
 	</div>

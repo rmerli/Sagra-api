@@ -17,6 +17,17 @@ UPDATE categories
   WHERE id = $1
 RETURNING *;
 
+-- name: GetCategoryWithSection :one
+SELECT sqlc.embed(categories), sqlc.embed(sections)
+FROM categories
+JOIN sections ON categories.section_id = sections.id
+WHERE categories.id = $1 LIMIT 1;
+
+-- name: GetAllCategoryWithSection :many
+SELECT sqlc.embed(categories), sqlc.embed(sections)
+FROM categories
+JOIN sections ON categories.section_id = sections.id;
+
 -- name: DeleteCategory :exec
 DELETE FROM categories
 WHERE id = $1;

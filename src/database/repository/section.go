@@ -3,54 +3,54 @@ package repository
 import (
 	"context"
 	"gtmx/src/database"
+	"gtmx/src/model"
 )
 
 type SectionRepository struct {
 	db *database.Queries
 }
 
-func (r SectionRepository) List(ctx context.Context) ([]database.Section, error) {
+func (r SectionRepository) List(ctx context.Context) ([]model.Section, error) {
 	sections, err := r.db.ListSections(ctx)
 	if err != nil {
-		return []database.Section{}, err
-
+		return []model.Section{}, err
 	}
 
-	return sections, nil
+	return model.NewSectionList(sections), nil
 }
 
-func (r SectionRepository) Get(ctx context.Context, id int64) (database.Section, error) {
+func (r SectionRepository) Get(ctx context.Context, id int64) (model.Section, error) {
 	section, err := r.db.GetSection(ctx, id)
 
 	if err != nil {
-		return database.Section{}, err
+		return model.Section{}, err
 
 	}
 
-	return section, nil
+	return model.NewSection(section.ID, section.Name), nil
 }
 
-func (r SectionRepository) Update(ctx context.Context, section database.Section) (database.Section, error) {
-	section, err := r.db.UpdateSection(ctx, database.UpdateSectionParams{
-		ID:   section.ID,
+func (r SectionRepository) Update(ctx context.Context, section model.Section) (model.Section, error) {
+	_, err := r.db.UpdateSection(ctx, database.UpdateSectionParams{
+		ID:   section.Id,
 		Name: section.Name,
 	})
 
 	if err != nil {
-		return database.Section{}, err
+		return model.Section{}, err
 	}
 
 	return section, nil
 }
 
-func (r SectionRepository) Insert(ctx context.Context, section database.Section) (database.Section, error) {
-
+func (r SectionRepository) Insert(ctx context.Context, section model.Section) (model.Section, error) {
 	insertedSection, err := r.db.CreateSection(ctx, section.Name)
 	if err != nil {
-		return database.Section{}, err
+		return model.Section{}, err
 	}
 
-	return insertedSection, nil
+	section.Id = insertedSection.ID
+	return section, nil
 }
 
 func NewSectionRepository(db *database.Queries) SectionRepository {

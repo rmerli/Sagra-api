@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"gtmx/src/database"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
@@ -12,7 +11,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 )
 
@@ -49,14 +47,12 @@ func (h CategoryHandler) HandleShow(c echo.Context) error {
 		return err
 	}
 
-	p, err := h.categoryService.Get(c.Request().Context(), id)
+	category, err := h.categoryService.Get(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
 
-	viewCategory, err := model.Category{}.FromDatabase(p)
-
-	return render(c, layout.ProtectedViews(user, view.ShowCategory(viewCategory)))
+	return render(c, layout.ProtectedViews(user, view.ShowCategory(category)))
 }
 
 func (h CategoryHandler) HandleNew(c echo.Context) error {
@@ -79,19 +75,93 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	p := database.Category{
-		Name:      c.FormValue("name"),
-		SectionID: pgtype.Int8{Int64: id, Valid: true},
+	section, err := h.sectionService.Get(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	p := model.Category{
+		Name:    c.FormValue("name"),
+		Section: section,
 	}
 
 	insertedCategory, err := h.categoryService.Insert(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}
-
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_CATEGORY), insertedCategory.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_CATEGORY), insertedCategory.Id)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
+}
+
+type editCategoryPayload struct {
+	Id int64 `param:"id"`
+}
+
+func (h CategoryHandler) HandleEdit(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	var payload editCategoryPayload
+	err = c.Bind(&payload)
+	if err != nil {
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.EditCategory(model.Category{}, nil)))
+	}
+
+	category, err := h.categoryService.Get(c.Request().Context(), payload.Id)
+	if err != nil {
+		return err
+	}
+
+	sections, err := h.sectionService.GetAll(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return render(c, layout.ProtectedViews(user, view.EditCategory(category, sections)))
+}
+
+type updateCategoryPayload struct {
+	Id        int64  `param:"id"`
+	Name      string `form:"name"`
+	SectionID int64  `form:"section_id"`
+}
+
+func (h CategoryHandler) HandleUpdate(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	var payload updateCategoryPayload
+	err = c.Bind(&payload)
+	if err != nil {
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.EditCategory(model.Category{}, nil)))
+	}
+
+	category, err := h.categoryService.Get(c.Request().Context(), payload.Id)
+	if err != nil {
+		return err
+	}
+
+	section, err := h.sectionService.Get(c.Request().Context(), payload.SectionID)
+	if err != nil {
+		return err
+	}
+
+	category.Name = payload.Name
+	category.Section = section
+
+	category, err = h.categoryService.Update(c.Request().Context(), category)
+	if err != nil {
+		return err
+	}
+
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, category.Id))
 }
 
 func NewCategoryHandler(sectionService *service.Section, categoryService *service.Category) CategoryHandler {

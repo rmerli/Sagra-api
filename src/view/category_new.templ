@@ -2,11 +2,11 @@ package view
 
 import (
 	"fmt"
-	"gtmx/src/database"
 	"gtmx/src/server/routes"
+	"gtmx/src/model"
 )
 
-templ NewCategory(sections []database.Section) {
+templ NewCategory(sections []model.Section) {
 	<div class="text-center">
 		Create New Category
 	</div>
@@ -16,7 +16,7 @@ templ NewCategory(sections []database.Section) {
 			<select name="section_id" class="select select-bordered w-full max-w-xs">
 				<option disabled selected>Section</option>
 				for _, section := range sections {
-					<option value={ fmt.Sprintf("%d", section.ID) }>{ section.Name }</option>
+					<option value={ fmt.Sprintf("%d", section.Id) }>{ section.Name }</option>
 				}
 			</select>
 		</div>

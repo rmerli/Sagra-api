@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"gtmx/src/database"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
@@ -50,17 +49,12 @@ func (h SectionHandler) HandleShow(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	dbSection, err := h.sectionService.Get(c.Request().Context(), payload.Id)
+	section, err := h.sectionService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	viewSection, err := model.Section{}.FromDatabase(dbSection)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.ShowSection(viewSection)))
+	return render(c, layout.ProtectedViews(user, view.ShowSection(section)))
 }
 
 type updateSectionPayload struct {
@@ -93,7 +87,7 @@ func (h SectionHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, s.ID))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, s.Id))
 }
 
 type editSectionPayload struct {
@@ -113,17 +107,12 @@ func (h SectionHandler) HandleEdit(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	dbSection, err := h.sectionService.Get(c.Request().Context(), payload.Id)
+	section, err := h.sectionService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	viewSection, err := model.Section{}.FromDatabase(dbSection)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.EditSection(viewSection)))
+	return render(c, layout.ProtectedViews(user, view.EditSection(section)))
 }
 
 func (h SectionHandler) HandleNew(c echo.Context) error {
@@ -152,12 +141,12 @@ func (h SectionHandler) HandleCreate(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.NewSection()))
 	}
 
-	insertedSection, err := h.sectionService.Create(c.Request().Context(), database.Section{Name: payload.Name})
+	section, err := h.sectionService.Create(c.Request().Context(), model.Section{Name: payload.Name})
 	if err != nil {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, insertedSection.ID))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, section.Id))
 }
 
 func NewSectionHandler(sectionService service.Section) SectionHandler {

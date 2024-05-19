@@ -1,0 +1,32 @@
+package view
+
+import (
+	"fmt"
+	"gtmx/src/server/routes"
+	"gtmx/src/model"
+)
+
+templ EditCategory(category model.Category, sections []model.Section) {
+	<div class="text-center">
+		Edit New Category
+	</div>
+	<form
+		action={ templ.URL(PathReplaceId(routes.UPDATE_CATEGORY, category.Id)) }
+		method="POST"
+	>
+		<div>
+			<input type="text" name="name" placeholder="Name" class="input input-bordered w-full max-w-xs" value={ category.Name }/>
+			<select name="section_id" class="select select-bordered w-full max-w-xs">
+				<option disabled selected>Section</option>
+				for _, section := range sections {
+					if section.Id == category.Section.Id {
+						<option selected value={ fmt.Sprintf("%d", section.Id) }>{ section.Name }</option>
+					} else {
+						<option value={ fmt.Sprintf("%d", section.Id) }>{ section.Name }</option>
+					}
+				}
+			</select>
+		</div>
+		<button class="btn input-bordered">Save</button>
+	</form>
+}

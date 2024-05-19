@@ -99,6 +99,8 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.POST("/categoies", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
 	authenticatedRoutes.GET("/categories/:id", categoryHandler.HandleShow).Name = routes.SHOW_CATEGORY
 	authenticatedRoutes.GET("/categories/new", categoryHandler.HandleNew).Name = routes.NEW_CATEGORY
+	authenticatedRoutes.GET("/categories/:id/edit", categoryHandler.HandleEdit).Name = routes.EDIT_CATEGORY
+	authenticatedRoutes.POST("/categories/:id", categoryHandler.HandleUpdate).Name = routes.UPDATE_CATEGORY
 
 	variantHandler := handler.NewVariantHandler(variantService)
 	authenticatedRoutes.GET("/variants", variantHandler.HandleIndex).Name = routes.INDEX_VARIANT

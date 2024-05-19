@@ -6,6 +6,7 @@ import (
 
 templ ShowCategory(category model.Category) {
 	<div class="text-center">
-		<h1>Category: { category.Name }</h1>
+		Category: { category.Name }
+		Section: { category.Section.Name }
 	</div>
 }

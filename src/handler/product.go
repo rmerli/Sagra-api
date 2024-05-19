@@ -2,17 +2,14 @@ package handler
 
 import (
 	"fmt"
-	"gtmx/src/database"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
 	"gtmx/src/service/auth"
 	"gtmx/src/view"
 	"gtmx/src/view/layout"
-	"math/big"
 	"net/http"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 )
 
@@ -52,13 +49,12 @@ func (h ProductHandler) HandleShow(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.ShowProduct(model.Product{})))
 	}
 
-	p, err := h.productService.Get(c.Request().Context(), payload.Id)
+	product, err := h.productService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	viewProduct, err := model.Product{}.FromDatabase(p)
-	return render(c, layout.ProtectedViews(user, view.ShowProduct(viewProduct)))
+	return render(c, layout.ProtectedViews(user, view.ShowProduct(product)))
 }
 
 func (h ProductHandler) HandleNew(c echo.Context) error {
@@ -90,18 +86,18 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.NewProduct()))
 	}
 
-	p := database.Product{
+	product := model.Product{
 		Name:  c.FormValue("name"),
 		Abbr:  c.FormValue("abbr"),
-		Price: pgtype.Numeric{Int: big.NewInt(int64(payload.Price * 100)), Exp: -2, Valid: true},
+		Price: payload.Price,
 	}
 
-	insertedProduct, err := h.productService.Create(c.Request().Context(), p)
+	product, err = h.productService.Create(c.Request().Context(), product)
 	if err != nil {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_PRODUCT), insertedProduct.ID)
+	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_PRODUCT), product.Id)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
 }
@@ -123,13 +119,12 @@ func (h ProductHandler) HandleEdit(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditProduct(model.Product{})))
 	}
 
-	p, err := h.productService.Get(c.Request().Context(), payload.Id)
+	product, err := h.productService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	viewProduct, err := model.Product{}.FromDatabase(p)
-	return render(c, layout.ProtectedViews(user, view.EditProduct(viewProduct)))
+	return render(c, layout.ProtectedViews(user, view.EditProduct(product)))
 }
 
 type updateProductPayload struct {
@@ -145,28 +140,28 @@ func (h ProductHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	var paylaod updateProductPayload
-	err = c.Bind(&paylaod)
+	var payload updateProductPayload
+	err = c.Bind(&payload)
 	if err != nil {
 		c.Response().Status = http.StatusBadRequest
 		return render(c, layout.ProtectedViews(user, view.EditProduct(model.Product{})))
 	}
 
-	p, err := h.productService.Get(c.Request().Context(), paylaod.Id)
+	product, err := h.productService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	p.Name = paylaod.Name
-	p.Abbr = paylaod.Abbr
-	p.Price = pgtype.Numeric{Int: big.NewInt(int64(paylaod.Price * 100)), Exp: -2, Valid: true}
+	product.Name = payload.Name
+	product.Abbr = payload.Abbr
+	product.Price = payload.Price
 
-	p, err = h.productService.Update(c.Request().Context(), p)
+	product, err = h.productService.Update(c.Request().Context(), product)
 	if err != nil {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PROUCT, p.ID))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PROUCT, payload.Id))
 }
 
 func NewProductHandler(service service.Product) ProductHandler {

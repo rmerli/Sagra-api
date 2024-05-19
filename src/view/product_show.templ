@@ -2,12 +2,13 @@ package view
 
 import (
 	"gtmx/src/model"
+	"fmt"
 )
 
 templ ShowProduct(product model.Product) {
 	<div class="text-center">
 		<h1>Product: { product.Name }</h1>
 		<h1>Abbreviation: { product.Abbr }</h1>
-		<h1>Price: { product.Price }</h1>
+		<h1>Price: { fmt.Sprintf("%.2f",product.Price) }</h1>
 	</div>
 }

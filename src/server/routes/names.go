@@ -25,11 +25,13 @@ const (
 	CREATE_CATEGORY = "create-category"
 	SHOW_CATEGORY   = "show-category"
 	EDIT_CATEGORY   = "edit-category"
+	UPDATE_CATEGORY = "update-category"
 	NEW_CATEGORY    = "new-category"
 
 	INDEX_VARIANT  = "index-variant"
 	CREATE_VARIANT = "create-variant"
 	SHOW_VARIANT   = "show-variant"
 	EDIT_VARIANT   = "edit-variant"
+	UPDATE_VARIANT = "update-variant"
 	NEW_VARIANT    = "new-variant"
 )
