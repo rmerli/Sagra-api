@@ -3,12 +3,12 @@ package handler
 import (
 	"fmt"
 	"gtmx/src/database"
-	"gtmx/src/database/repository"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
+	"gtmx/src/service"
 	"gtmx/src/service/auth"
+	"gtmx/src/view"
 	"gtmx/src/view/layout"
-	"gtmx/src/view/variant"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -18,7 +18,7 @@ import (
 )
 
 type VariantHandler struct {
-	Repo *repository.CatalogRepository
+	variantService *service.Variant
 }
 
 func (h VariantHandler) HandleIndex(c echo.Context) error {
@@ -27,13 +27,13 @@ func (h VariantHandler) HandleIndex(c echo.Context) error {
 		return err
 	}
 
-	variants, err := h.Repo.ListVariants(c.Request().Context())
+	variants, err := h.variantService.GetAll(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, variant.IndexView(variants)))
+	return render(c, layout.ProtectedViews(user, view.IndexVariant(variants)))
 }
 
 func (h VariantHandler) HandleShow(c echo.Context) error {
@@ -49,14 +49,14 @@ func (h VariantHandler) HandleShow(c echo.Context) error {
 		return err
 	}
 
-	p, err := h.Repo.GetOneVariantById(c.Request().Context(), id)
+	p, err := h.variantService.Get(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
 
 	viewVariant, err := model.Variant{}.FromDatabase(p)
 
-	return render(c, layout.ProtectedViews(user, variant.ShowView(viewVariant)))
+	return render(c, layout.ProtectedViews(user, view.ShowVariant(viewVariant)))
 }
 
 func (h VariantHandler) HandleNew(c echo.Context) error {
@@ -65,7 +65,7 @@ func (h VariantHandler) HandleNew(c echo.Context) error {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, variant.NewView()))
+	return render(c, layout.ProtectedViews(user, view.NewVariant()))
 }
 
 func (h VariantHandler) HandleCreate(c echo.Context) error {
@@ -81,7 +81,7 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		Price: pgtype.Numeric{Int: big.NewInt(int64(price * 100)), Exp: -2, Valid: true},
 	}
 
-	insertedVariant, err := h.Repo.InsertVariant(c.Request().Context(), p)
+	insertedVariant, err := h.variantService.Create(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}
@@ -89,4 +89,10 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_VARIANT), insertedVariant.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
+}
+
+func NewVariantHandler(variantService service.Variant) VariantHandler {
+	return VariantHandler{
+		variantService: &variantService,
+	}
 }

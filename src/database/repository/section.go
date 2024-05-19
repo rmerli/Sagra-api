@@ -9,7 +9,7 @@ type SectionRepository struct {
 	db *database.Queries
 }
 
-func (r SectionRepository) ListSections(ctx context.Context) ([]database.Section, error) {
+func (r SectionRepository) List(ctx context.Context) ([]database.Section, error) {
 	sections, err := r.db.ListSections(ctx)
 	if err != nil {
 		return []database.Section{}, err
@@ -19,7 +19,7 @@ func (r SectionRepository) ListSections(ctx context.Context) ([]database.Section
 	return sections, nil
 }
 
-func (r SectionRepository) GetOneSectionById(ctx context.Context, id int64) (database.Section, error) {
+func (r SectionRepository) Get(ctx context.Context, id int64) (database.Section, error) {
 	section, err := r.db.GetSection(ctx, id)
 
 	if err != nil {
@@ -30,7 +30,20 @@ func (r SectionRepository) GetOneSectionById(ctx context.Context, id int64) (dat
 	return section, nil
 }
 
-func (r SectionRepository) InsertSection(ctx context.Context, section database.Section) (database.Section, error) {
+func (r SectionRepository) Update(ctx context.Context, section database.Section) (database.Section, error) {
+	section, err := r.db.UpdateSection(ctx, database.UpdateSectionParams{
+		ID:   section.ID,
+		Name: section.Name,
+	})
+
+	if err != nil {
+		return database.Section{}, err
+	}
+
+	return section, nil
+}
+
+func (r SectionRepository) Insert(ctx context.Context, section database.Section) (database.Section, error) {
 
 	insertedSection, err := r.db.CreateSection(ctx, section.Name)
 	if err != nil {

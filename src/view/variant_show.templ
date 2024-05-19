@@ -1,0 +1,12 @@
+package view
+
+import (
+	"gtmx/src/model"
+)
+
+templ ShowVariant(variant model.Variant) {
+	<div class="text-center">
+		<h1>Variant: { variant.Name }</h1>
+		<h1>Price: { variant.Price }</h1>
+	</div>
+}

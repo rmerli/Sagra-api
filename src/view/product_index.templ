@@ -1,0 +1,21 @@
+package view
+
+import (
+	"gtmx/src/database"
+	"gtmx/src/server/routes"
+)
+
+templ IndexProduct(products []database.Product) {
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath(routes.NEW_PRODUCT)) }><button class="btn btn-primary">New Product</button></a>
+	</div>
+	<div>Products: </div>
+	for _, product := range products {
+		<div>
+			{ product.Name }
+			{ product.Abbr }
+			{ FormatPrice(product.Price) }
+			<a href={ templ.URL(PathReplaceId(routes.EDIT_PROUCT, product.ID)) }><button class="btn">edit </button></a>
+		</div>
+	}
+}

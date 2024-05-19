@@ -1,0 +1,19 @@
+package view
+
+import (
+	"gtmx/src/database"
+	"gtmx/src/server/routes"
+)
+
+templ IndexSection(sections []database.Section) {
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath(routes.NEW_SECTION)) }><button class="btn btn-primary">New Section</button></a>
+	</div>
+	<div>Sections: </div>
+	for _, section := range sections {
+		<div>
+			{ section.Name }
+			<a href={ templ.URL(PathReplaceId(routes.EDIT_SECTION, section.ID)) }><button class="btn">edit </button></a>
+		</div>
+	}
+}

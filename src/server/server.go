@@ -54,12 +54,18 @@ func (s *Server) setRoutes() {
 
 	s.app.Static("/static", "static")
 
-	catalogRepo := repository.NewCatalogRepository(s.db)
+	variantRepo := repository.NewVariantRepository(s.db)
+	productRepo := repository.NewProductRepository(s.db)
+	categoryRepo := repository.NewCategoryRepository(s.db)
 	sectionRepo := repository.NewSectionRepository(s.db)
 	userRepo := repository.NewUserRepository(s.db)
-	authService := auth.NewAuthService(userRepo)
-	productService := service.NewProductService(&catalogRepo)
+
+	variantService := service.NewVariantService(&variantRepo)
+	productService := service.NewProductService(&productRepo)
+	categoryService := service.NewCategoryService(&categoryRepo)
 	sectionService := service.NewSectionService(&sectionRepo)
+
+	authService := auth.NewAuthService(userRepo)
 
 	authHandler := handler.AuthHandler{AuthService: authService}
 	s.app.GET("/signup", authHandler.HandleShowSignUp).Name = routes.SHOW_SIGN_UP
@@ -72,7 +78,7 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.Use(customMiddleware.Authenticated)
 	s.app.Use(customMiddleware.ResponseHeaders)
 
-	productHandler := handler.ProductHandler{Repo: &catalogRepo, Service: &productService}
+	productHandler := handler.NewProductHandler(productService)
 	authenticatedRoutes.GET("/products", productHandler.HandleIndex).Name = routes.INDEX_PRODUCT
 	authenticatedRoutes.POST("/products", productHandler.HandleCreate).Name = routes.CREATE_PRODUCT
 	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PROUCT
@@ -80,19 +86,21 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PROUCT
 	authenticatedRoutes.POST("/products/:id/update", productHandler.HandleUpdate).Name = routes.UPDATE_PROUCT
 
-	sectionHandler := handler.SectionHandler{Repo: &sectionRepo, Service: &sectionService}
+	sectionHandler := handler.NewSectionHandler(sectionService)
 	authenticatedRoutes.GET("/sections", sectionHandler.HandleIndex).Name = routes.INDEX_SECTION
 	authenticatedRoutes.POST("/sections", sectionHandler.HandleCreate).Name = routes.CREATE_SECTION
 	authenticatedRoutes.GET("/sections/:id", sectionHandler.HandleShow).Name = routes.SHOW_SECTION
 	authenticatedRoutes.GET("/sections/new", sectionHandler.HandleNew).Name = routes.NEW_SECTION
+	authenticatedRoutes.GET("/sections/:id/edit", sectionHandler.HandleEdit).Name = routes.EDIT_SECTION
+	authenticatedRoutes.POST("/sections/:id", sectionHandler.HandleUpdate).Name = routes.UPDATE_SECTION
 
-	categoryHandler := handler.CategoryHandler{Repo: &catalogRepo}
+	categoryHandler := handler.NewCategoryHandler(&sectionService, &categoryService)
 	authenticatedRoutes.GET("/categories", categoryHandler.HandleIndex).Name = routes.INDEX_CATEGORY
 	authenticatedRoutes.POST("/categoies", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
 	authenticatedRoutes.GET("/categories/:id", categoryHandler.HandleShow).Name = routes.SHOW_CATEGORY
 	authenticatedRoutes.GET("/categories/new", categoryHandler.HandleNew).Name = routes.NEW_CATEGORY
 
-	variantHandler := handler.VariantHandler{Repo: &catalogRepo}
+	variantHandler := handler.NewVariantHandler(variantService)
 	authenticatedRoutes.GET("/variants", variantHandler.HandleIndex).Name = routes.INDEX_VARIANT
 	authenticatedRoutes.POST("/variants", variantHandler.HandleCreate).Name = routes.CREATE_VARIANT
 	authenticatedRoutes.GET("/variants/:id", variantHandler.HandleShow).Name = routes.SHOW_VARIANT

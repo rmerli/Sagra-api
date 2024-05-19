@@ -17,15 +17,19 @@ const (
 	INDEX_SECTION  = "index-section"
 	CREATE_SECTION = "create-section"
 	SHOW_SECTION   = "show-section"
+	EDIT_SECTION   = "edit-section"
+	UPDATE_SECTION = "update-section"
 	NEW_SECTION    = "new-section"
 
 	INDEX_CATEGORY  = "index-category"
 	CREATE_CATEGORY = "create-category"
 	SHOW_CATEGORY   = "show-category"
+	EDIT_CATEGORY   = "edit-category"
 	NEW_CATEGORY    = "new-category"
 
 	INDEX_VARIANT  = "index-variant"
 	CREATE_VARIANT = "create-variant"
 	SHOW_VARIANT   = "show-variant"
+	EDIT_VARIANT   = "edit-variant"
 	NEW_VARIANT    = "new-variant"
 )

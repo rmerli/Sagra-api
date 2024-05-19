@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"gtmx/src/database"
-	"gtmx/src/database/migration"
 	"gtmx/src/server"
 	"os"
 	"syscall"
@@ -58,7 +57,7 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 }
 
 func (s *IntegrationTestSuite) SetupTest() {
-	migration := migration.Migration{
+	migration := database.Migration{
 		Db: s.conn,
 	}
 	migration.MigrateFresh()

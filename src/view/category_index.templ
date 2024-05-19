@@ -1,0 +1,15 @@
+package view
+
+import (
+	"gtmx/src/database"
+	"gtmx/src/server/routes"
+)
+
+templ IndexCategory(categories []database.Category) {
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath(routes.NEW_CATEGORY)) }><button class="btn btn-primary">New Category</button></a>
+	</div>
+	for _, category := range categories {
+		<h1>Category: { category.Name }</h1>
+	}
+}

@@ -3,11 +3,11 @@ package handler
 import (
 	"fmt"
 	"gtmx/src/database"
-	"gtmx/src/database/repository"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
+	"gtmx/src/service"
 	"gtmx/src/service/auth"
-	"gtmx/src/view/category"
+	"gtmx/src/view"
 	"gtmx/src/view/layout"
 	"net/http"
 	"strconv"
@@ -17,7 +17,8 @@ import (
 )
 
 type CategoryHandler struct {
-	Repo *repository.CatalogRepository
+	sectionService  *service.Section
+	categoryService *service.Category
 }
 
 func (h CategoryHandler) HandleIndex(c echo.Context) error {
@@ -26,13 +27,13 @@ func (h CategoryHandler) HandleIndex(c echo.Context) error {
 		return err
 	}
 
-	categories, err := h.Repo.ListCategories(c.Request().Context())
+	categories, err := h.categoryService.GetAll(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, category.IndexView(categories)))
+	return render(c, layout.ProtectedViews(user, view.IndexCategory(categories)))
 }
 
 func (h CategoryHandler) HandleShow(c echo.Context) error {
@@ -48,14 +49,14 @@ func (h CategoryHandler) HandleShow(c echo.Context) error {
 		return err
 	}
 
-	p, err := h.Repo.GetOneCategoryById(c.Request().Context(), id)
+	p, err := h.categoryService.Get(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
 
 	viewCategory, err := model.Category{}.FromDatabase(p)
 
-	return render(c, layout.ProtectedViews(user, category.ShowView(viewCategory)))
+	return render(c, layout.ProtectedViews(user, view.ShowCategory(viewCategory)))
 }
 
 func (h CategoryHandler) HandleNew(c echo.Context) error {
@@ -64,11 +65,11 @@ func (h CategoryHandler) HandleNew(c echo.Context) error {
 		return err
 	}
 
-	sections, err := h.Repo.ListSections(c.Request().Context())
+	sections, err := h.sectionService.GetAll(c.Request().Context())
 	if err != nil {
 		return err
 	}
-	return render(c, layout.ProtectedViews(user, category.NewView(sections)))
+	return render(c, layout.ProtectedViews(user, view.NewCategory(sections)))
 }
 
 func (h CategoryHandler) HandleCreate(c echo.Context) error {
@@ -83,7 +84,7 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 		SectionID: pgtype.Int8{Int64: id, Valid: true},
 	}
 
-	insertedCategory, err := h.Repo.InsertCategory(c.Request().Context(), p)
+	insertedCategory, err := h.categoryService.Insert(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}
@@ -91,4 +92,11 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_CATEGORY), insertedCategory.ID)
 
 	return c.Redirect(http.StatusMovedPermanently, endpoint)
+}
+
+func NewCategoryHandler(sectionService *service.Section, categoryService *service.Category) CategoryHandler {
+	return CategoryHandler{
+		sectionService:  sectionService,
+		categoryService: categoryService,
+	}
 }
