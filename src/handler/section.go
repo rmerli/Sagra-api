@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gtmx/src/database"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
@@ -10,7 +9,6 @@ import (
 	"gtmx/src/view"
 	"gtmx/src/view/layout"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -34,20 +32,25 @@ func (h SectionHandler) HandleIndex(c echo.Context) error {
 	return render(c, layout.ProtectedViews(user, view.IndexSection(sections)))
 }
 
+type showSectionPayload struct {
+	Id int64 `param:"id"`
+}
+
 func (h SectionHandler) HandleShow(c echo.Context) error {
 	user, err := auth.GetUser(c)
 	if err != nil {
 		return err
 	}
 
-	idString := c.Param("id")
+	var payload showSectionPayload
 
-	id, err := strconv.ParseInt(idString, 10, 64)
+	err = c.Bind(&payload)
 	if err != nil {
-		return err
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	dbSection, err := h.sectionService.Get(c.Request().Context(), id)
+	dbSection, err := h.sectionService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
@@ -71,19 +74,19 @@ func (h SectionHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	var paylaod updateSectionPayload
-	err = c.Bind(&paylaod)
+	var payload updateSectionPayload
+	err = c.Bind(&payload)
 	if err != nil {
 		c.Response().Status = http.StatusBadRequest
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	s, err := h.sectionService.Get(c.Request().Context(), paylaod.Id)
+	s, err := h.sectionService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
 		return err
 	}
 
-	s.Name = paylaod.Name
+	s.Name = payload.Name
 
 	s, err = h.sectionService.Update(c.Request().Context(), s)
 	if err != nil {
@@ -132,19 +135,29 @@ func (h SectionHandler) HandleNew(c echo.Context) error {
 	return render(c, layout.ProtectedViews(user, view.NewSection()))
 }
 
-func (h SectionHandler) HandleCreate(c echo.Context) error {
-	p := database.Section{
-		Name: c.FormValue("name"),
-	}
+type createSectionPayload struct {
+	Name string `form:"name"`
+}
 
-	insertedSection, err := h.sectionService.Create(c.Request().Context(), p)
+func (h SectionHandler) HandleCreate(c echo.Context) error {
+	user, err := auth.GetUser(c)
 	if err != nil {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_SECTION), insertedSection.ID)
+	var payload createSectionPayload
+	err = c.Bind(&payload)
+	if err != nil {
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.NewSection()))
+	}
 
-	return c.Redirect(http.StatusMovedPermanently, endpoint)
+	insertedSection, err := h.sectionService.Create(c.Request().Context(), database.Section{Name: payload.Name})
+	if err != nil {
+		return err
+	}
+
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, insertedSection.ID))
 }
 
 func NewSectionHandler(sectionService service.Section) SectionHandler {
