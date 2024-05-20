@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
@@ -89,9 +88,8 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_CATEGORY), insertedCategory.Id)
 
-	return c.Redirect(http.StatusMovedPermanently, endpoint)
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, insertedCategory.Id))
 }
 
 type editCategoryPayload struct {

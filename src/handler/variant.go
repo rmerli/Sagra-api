@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
@@ -81,9 +80,68 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_VARIANT), insertedVariant.Id)
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, insertedVariant.Id))
+}
 
-	return c.Redirect(http.StatusMovedPermanently, endpoint)
+type editVariantPayload struct {
+	Id int64 `param:"id"`
+}
+
+func (h VariantHandler) HandleEdit(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	var payload editVariantPayload
+	err = c.Bind(&payload)
+	if err != nil {
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
+	}
+
+	variant, err := h.variantService.Get(c.Request().Context(), payload.Id)
+	if err != nil {
+		return err
+	}
+
+	return render(c, layout.ProtectedViews(user, view.EditVariant(variant)))
+}
+
+type updateVariantPayload struct {
+	Id    int64   `param:"id"`
+	Name  string  `form:"name"`
+	Abbr  string  `form:"abbr"`
+	Price float64 `form:"price"`
+}
+
+func (h VariantHandler) HandleUpdate(c echo.Context) error {
+	user, err := auth.GetUser(c)
+	if err != nil {
+		return err
+	}
+
+	var payload updateVariantPayload
+	err = c.Bind(&payload)
+	if err != nil {
+		c.Response().Status = http.StatusBadRequest
+		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
+	}
+
+	variant, err := h.variantService.Get(c.Request().Context(), payload.Id)
+	if err != nil {
+		return err
+	}
+
+	variant.Name = payload.Name
+	variant.Price = payload.Price
+
+	variant, err = h.variantService.Update(c.Request().Context(), variant)
+	if err != nil {
+		return err
+	}
+
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, payload.Id))
 }
 
 func NewVariantHandler(variantService service.Variant) VariantHandler {

@@ -84,7 +84,7 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PROUCT
 	authenticatedRoutes.GET("/products/new", productHandler.HandleNew).Name = routes.NEW_PRODUCT
 	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PROUCT
-	authenticatedRoutes.POST("/products/:id/update", productHandler.HandleUpdate).Name = routes.UPDATE_PROUCT
+	authenticatedRoutes.POST("/products/:id", productHandler.HandleUpdate).Name = routes.UPDATE_PROUCT
 
 	sectionHandler := handler.NewSectionHandler(sectionService)
 	authenticatedRoutes.GET("/sections", sectionHandler.HandleIndex).Name = routes.INDEX_SECTION
@@ -107,6 +107,8 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.POST("/variants", variantHandler.HandleCreate).Name = routes.CREATE_VARIANT
 	authenticatedRoutes.GET("/variants/:id", variantHandler.HandleShow).Name = routes.SHOW_VARIANT
 	authenticatedRoutes.GET("/variants/new", variantHandler.HandleNew).Name = routes.NEW_VARIANT
+	authenticatedRoutes.GET("/variants/:id/edit", variantHandler.HandleEdit).Name = routes.EDIT_VARIANT
+	authenticatedRoutes.POST("/variants/:id", variantHandler.HandleUpdate).Name = routes.UPDATE_VARIANT
 
 	routes.SetRoutesMap(s.app.Routes())
 }

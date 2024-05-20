@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"gtmx/src/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
@@ -97,9 +96,7 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	endpoint := fmt.Sprintf("%s/%d", routes.GetPath(routes.INDEX_PRODUCT), product.Id)
-
-	return c.Redirect(http.StatusMovedPermanently, endpoint)
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PROUCT, product.Id))
 }
 
 type editProductPayload struct {
