@@ -30,5 +30,8 @@ RUN make build
 FROM alpine as prod
 WORKDIR /root/
 COPY --from=builder /src/app ./app
-RUN ls -la .
+
+RUN ls -la ./
+RUN ls -la ./app/
+RUN ls -la ./app/bin
 CMD ["./app/bin/main"]
