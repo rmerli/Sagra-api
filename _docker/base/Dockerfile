@@ -9,5 +9,3 @@ RUN go install github.com/a-h/templ/cmd/templ@v0.2.707
 RUN apk add nodejs npm
 
 RUN apk update && apk add build-base wget g++ curl bash make libc6-compat
-
-CMD ["/bin/bash"]
