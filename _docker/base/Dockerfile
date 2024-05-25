@@ -10,4 +10,4 @@ RUN apk add nodejs npm
 
 RUN apk update && apk add build-base wget g++ curl bash make
 
-CMD ["/bin/sh"]
+CMD ["/bin/bash"]
