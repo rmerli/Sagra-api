@@ -29,4 +29,4 @@ RUN make build
 FROM alpine as prod
 WORKDIR /root/
 COPY --from=builder /src/app ./app
-CMD ["/root/app/bin/main"]
+ENTRYPOINT ["/bin/bash", "/root/app/bin/main"]
