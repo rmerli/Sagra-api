@@ -54,6 +54,11 @@ func (s *Server) setRoutes() {
 
 	s.app.Static("/static", "static")
 
+	s.app.GET("/health", func(c echo.Context) error {
+		c.Response().Status = 200
+		return nil
+	})
+
 	variantRepo := repository.NewVariantRepository(s.db)
 	productRepo := repository.NewProductRepository(s.db)
 	categoryRepo := repository.NewCategoryRepository(s.db)
