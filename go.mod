@@ -3,7 +3,7 @@ module gtmx
 go 1.21.5
 
 require (
-	github.com/a-h/templ v0.2.680
+	github.com/a-h/templ v0.2.707
 	github.com/antonlindstrom/pgstore v0.0.0-20220421113606-e3a6e3fed12a
 	github.com/gorilla/context v1.1.2
 	github.com/jackc/pgx/v5 v5.5.3

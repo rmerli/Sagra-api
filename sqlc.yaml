@@ -3,8 +3,8 @@ sql:
   - engine: "postgresql"
     queries: "queries"
     schema: "migrations/postgres"
-    database:
-      uri: "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable" 
+    # database:
+      # uri: "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable" 
     gen:
       go:
         package: "database"

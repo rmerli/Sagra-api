@@ -18,3 +18,16 @@ services:
       - 5432:5432
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
+  go:
+    container_name: server
+    build: ./go/
+    restart: always
+    environment:
+      DB_URL: "postgresql://sagra:sagra@sagra_db/sagra?sslmode=disable"
+      STORE_KEY: secret-key
+      PORT: 8080
+      ADDRESS: 127.0.0.1
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
