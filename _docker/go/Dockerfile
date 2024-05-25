@@ -12,6 +12,4 @@ COPY --from=builder /src/app ./app
 
 RUN apk update && apk add wget curl
 
-EXPOSE 3000
-
 CMD ["/root/app/bin/main"]
