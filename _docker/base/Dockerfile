@@ -1,5 +1,4 @@
 FROM golang:1.22-alpine
-WORKDIR /src/app
 
 ######### Install go tools #############
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.26.0
