@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
-	"gtmx/src/model"
 )
 
 type Product struct {

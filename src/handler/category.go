@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"gtmx/src/model"
+	"gtmx/src/database/model"
 	"gtmx/src/server/routes"
 	"gtmx/src/service"
 	"gtmx/src/service/auth"

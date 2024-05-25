@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"gtmx/src/database"
-	"gtmx/src/model"
+	"gtmx/src/database/model"
 	"math/big"
 
 	"github.com/jackc/pgx/v5/pgtype"
