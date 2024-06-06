@@ -10,10 +10,7 @@ module.exports = {
 			center: true,
 		},
 	},
-	plugins: [
-		require("@tailwindcss/typography"),
-		require("daisyui"),
-	],
+	plugins: [],
 	corePlugins: {
 		preflight: true,
 	}

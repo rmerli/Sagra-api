@@ -162,9 +162,9 @@ func (h CategoryHandler) HandleUpdate(c echo.Context) error {
 	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, category.Id))
 }
 
-func NewCategoryHandler(sectionService *service.Section, categoryService *service.Category) CategoryHandler {
+func NewCategoryHandler(sectionService service.Section, categoryService service.Category) CategoryHandler {
 	return CategoryHandler{
-		sectionService:  sectionService,
-		categoryService: categoryService,
+		sectionService:  &sectionService,
+		categoryService: &categoryService,
 	}
 }

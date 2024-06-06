@@ -99,7 +99,7 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.GET("/sections/:id/edit", sectionHandler.HandleEdit).Name = routes.EDIT_SECTION
 	authenticatedRoutes.POST("/sections/:id", sectionHandler.HandleUpdate).Name = routes.UPDATE_SECTION
 
-	categoryHandler := handler.NewCategoryHandler(&sectionService, &categoryService)
+	categoryHandler := handler.NewCategoryHandler(sectionService, categoryService)
 	authenticatedRoutes.GET("/categories", categoryHandler.HandleIndex).Name = routes.INDEX_CATEGORY
 	authenticatedRoutes.POST("/categoies", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
 	authenticatedRoutes.GET("/categories/:id", categoryHandler.HandleShow).Name = routes.SHOW_CATEGORY
