@@ -5,52 +5,67 @@ import (
 	"gtmx/src/server/routes"
 )
 
+templ Topbar() {
+	<div>
+		<div class="block ">
+			<div class="flex h-12 relative z-50 bg-white shadow-cwhite shadow-sm "></div>
+		</div>
+	</div>
+}
+
 templ Sidebar(user database.User) {
-	<aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-		<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-			<ul class="space-y-2 font-medium">
-				<li>
-					<a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-						<span class="ms-3">{ user.Email }</span>
-					</a>
-				</li>
-				<li>
-					<a href={ templ.URL(routes.GetPath(routes.INDEX_SECTION)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-						<span class="flex-1 ms-3 whitespace-nowrap">Sections</span>
-					</a>
-				</li>
-				<li>
-					<a href={ templ.URL(routes.GetPath(routes.INDEX_CATEGORY)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-						<span class="flex-1 ms-3 whitespace-nowrap">Categories</span>
-					</a>
-				</li>
-				<li>
-					<a href={ templ.URL(routes.GetPath(routes.INDEX_PRODUCT)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-						<span class="flex-1 ms-3 whitespace-nowrap">Products</span>
-					</a>
-				</li>
-				<li>
-					<a href={ templ.URL(routes.GetPath(routes.INDEX_VARIANT)) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-						<span class="flex-1 ms-3 whitespace-nowrap">Variants</span>
-					</a>
-				</li>
-			</ul>
+	<aside id="default-sidebar" class="relative z-10 bg-cblack text-cwhite pt-4" aria-label="Sidebar">
+		<div class="w-64">
+			<div class="pt-20">
+				<hr class="text-cgray"/>
+			</div>
+			<div class="">
+				<ul class="font-medium">
+					<li>
+						<a href={ templ.URL(routes.GetPath(routes.INDEX_SECTION)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
+							<span class="flex-1 ms-3 whitespace-nowrap">Sections</span>
+						</a>
+					</li>
+					<li>
+						<a href={ templ.URL(routes.GetPath(routes.INDEX_CATEGORY)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
+							<span class="flex-1 ms-3 whitespace-nowrap">Categories</span>
+						</a>
+					</li>
+					<li>
+						<a href={ templ.URL(routes.GetPath(routes.INDEX_PRODUCT)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
+							<span class="flex-1 ms-3 whitespace-nowrap">Products</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div>
+				<hr class="text-cgray"/>
+			</div>
 		</div>
 	</aside>
 }
 
 templ Base(user database.User) {
-	<html class="dark">
+	<html>
 		<head>
 			<link rel="stylesheet" href="/static/css/tailwind.min.css"/>
 		</head>
-		<body>
-			<container class="container mx-auto">
-				@Sidebar(user)
-				<div class="text-center py-8 px-4 sm:px-6 lg:px-8">
-					{ children... }
+		<body class="overflow-hidden">
+			@Topbar()
+			<div class="flex-grow h-full">
+				<div class="flex h-full">
+					@Sidebar(user)
+					<div class="flex-1 p-8 bg-clight-gray">
+						<div class="max-w-4xl mx-auto">
+							<main class="pt-10">
+								<div class="min-w-full">
+									{ children... }
+								</div>
+							</main>
+						</div>
+					</div>
 				</div>
-			</container>
+			</div>
 		</body>
 	</html>
 }

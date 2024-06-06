@@ -7,16 +7,29 @@ import (
 )
 
 templ IndexProduct(products []model.Product) {
-	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath(routes.NEW_PRODUCT)) }><button class="btn btn-primary">New Product</button></a>
+	<div class="hidden">
+		<a href={ templ.URL(routes.GetPath(routes.NEW_PRODUCT)) }><button class="">New Product</button></a>
 	</div>
-	<div>Products: </div>
-	for _, product := range products {
-		<div>
-			{ product.Name }
-			{ product.Abbr }
-			{ fmt.Sprintf("%.2f", product.Price) }
-			<a href={ templ.URL(PathReplaceId(routes.EDIT_PROUCT, product.Id)) }><button class="btn">edit </button></a>
-		</div>
-	}
+	<div class="h-28">
+		<div class="text-2xl font-bold">Products</div>
+	</div>
+	<hr class="text-clight-light-gray"/>
+	<div class="pt-5">
+		<table class="min-w-full bg-white border-clight-light-gray rounded-xl">
+			<tr>
+				<td class="py-6 px-6 border-clight-light-gray border-b font-bold">Primi </td>
+				<td class="py-6 px-6 border-clight-light-gray border-b font-bold">Abbreviation</td>
+				<td class="py-6 px-6 border-clight-light-gray border-b font-bold">Price </td>
+				<td class="py-6 px-6 border-clight-light-gray border-b font-bold">Action </td>
+			</tr>
+			for _, product := range products {
+				<tr>
+					<td class="py-6 px-6 border-clight-light-gray border-b">{ product.Name }</td>
+					<td class="py-6 px-6 border-clight-light-gray border-b">{ product.Abbr }</td>
+					<td class="py-6 px-6 border-clight-light-gray border-b">{ fmt.Sprintf("%.2f", product.Price) }</td>
+					<td class="py-6 px-6 border-clight-light-gray border-b"><a href={ templ.URL(PathReplaceId(routes.EDIT_PROUCT, product.Id)) }><button class="btn">edit </button></a></td>
+				</tr>
+			}
+		</table>
+	</div>
 }
