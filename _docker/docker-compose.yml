@@ -3,7 +3,7 @@ version: '3.1'
 services:
   db:
     container_name: sagra_db
-    image: postgres
+    image: postgres:17.2
     restart: always
     environment:
       POSTGRES_USER: sagra

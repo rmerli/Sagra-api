@@ -1,0 +1,18 @@
+package view
+
+import (
+	"gtmx/src/database/model"
+	"gtmx/src/server/routes"
+)
+
+templ IndexMenu(menus []model.Menu) {
+	<div>Menus</div>
+	<div class="text-right">
+		<a href={ templ.URL(routes.GetPath(routes.NEW_VARIANT)) }><button class="btn btn-primary">New Variant</button></a>
+	</div>
+	for _, menu := range menus {
+		<div>
+			{ menu.Name }
+		</div>
+	}
+}

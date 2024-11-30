@@ -3,6 +3,7 @@ module.exports = {
 	content: [
 		'src/view/**/*.templ',
 		'src/view/**/*.go',
+		'!**/**docker**/**',
 	],
 	darkMode: 'class',
 	theme: {
@@ -18,9 +19,17 @@ module.exports = {
 		container: {
 			center: true,
 		},
+		extend: {
+			gridTemplateColumns: {
+				'base': '200px 1fr'
+			},
+			gridTemplateRows: {
+				'base': '60px 1fr'
+			}
+		}
 	},
 	files : {
-		exclude: ["**/docker/**","**/.git/**", "**/node_modules/**", "**/.hg/**", "**/.svn/**"]
+		exclude: ["**/**docker**/**","**/.git/**", "**/node_modules/**", "**/.hg/**", "**/.svn/**"]
 	},
 	plugins: [],
 	corePlugins: {

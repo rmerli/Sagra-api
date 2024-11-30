@@ -26,6 +26,23 @@ CREATE TABLE IF NOT EXISTS variants (
 	price NUMERIC(6,2) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS menus (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	name TEXT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS menus_categories (
+	id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	menu_id BIGINT NOT NULL, 
+	category_id BIGINT NOT NULL, 
+	sort INT NOT NULL,
+	CONSTRAINT fk_menus_categories_menu FOREIGN KEY(menu_id) REFERENCES menus(id),
+	CONSTRAINT fk_menus_categories_category FOREIGN KEY(category_id) REFERENCES categories(id),
+    CONSTRAINT unique_menu_category UNIQUE (menu_id,category_id)
+);
+
 CREATE TABLE IF NOT EXISTS products_variants (
 	product_id BIGINT, 
 	variant_id BIGINT, 
@@ -44,7 +61,9 @@ CREATE TABLE IF NOT EXISTS users (
 -- +migrate Down
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS products_variants;
+DROP TABLE IF EXISTS menus_categories;
 DROP TABLE IF EXISTS variants;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS sections;
+DROP TABLE IF EXISTS menus;

@@ -9,9 +9,9 @@ const (
 
 	INDEX_PRODUCT  = "index-product"
 	CREATE_PRODUCT = "create-product"
-	SHOW_PROUCT    = "show-prouct"
-	EDIT_PROUCT    = "edit-prouct"
-	UPDATE_PROUCT  = "update-prouct"
+	SHOW_PRODUCT   = "show-product"
+	EDIT_PRODUCT   = "edit-product"
+	UPDATE_PRODUCT = "update-product"
 	NEW_PRODUCT    = "new-product"
 
 	INDEX_SECTION  = "index-section"
@@ -34,4 +34,11 @@ const (
 	EDIT_VARIANT   = "edit-variant"
 	UPDATE_VARIANT = "update-variant"
 	NEW_VARIANT    = "new-variant"
+
+	INDEX_MENU  = "index-menu"
+	CREATE_MENU = "create-menu"
+	SHOW_Mewnu  = "show-menu"
+	EDIT_MENU   = "edit-menu"
+	UPDATE_MENU = "update-menu"
+	NEW_MENU    = "new-menu"
 )

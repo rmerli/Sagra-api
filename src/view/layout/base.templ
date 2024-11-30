@@ -6,41 +6,49 @@ import (
 )
 
 templ Topbar() {
-	<div>
-		<div class="block ">
-			<div class="flex h-12 relative z-50 bg-white shadow-cwhite shadow-sm "></div>
-		</div>
-	</div>
+	<div class="col-span-2 z-50 row-span-1 bg-white shadow-cwhite shadow-sm"></div>
 }
 
 templ Sidebar(user database.User) {
-	<aside id="default-sidebar" class="relative z-10 bg-cblack text-cwhite pt-4" aria-label="Sidebar">
-		<div class="w-64">
-			<div class="pt-20">
-				<hr class="text-cgray"/>
-			</div>
-			<div class="">
-				<ul class="font-medium">
-					<li>
-						<a href={ templ.URL(routes.GetPath(routes.INDEX_SECTION)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
-							<span class="flex-1 ms-3 whitespace-nowrap">Sections</span>
-						</a>
-					</li>
-					<li>
-						<a href={ templ.URL(routes.GetPath(routes.INDEX_CATEGORY)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
-							<span class="flex-1 ms-3 whitespace-nowrap">Categories</span>
-						</a>
-					</li>
-					<li>
-						<a href={ templ.URL(routes.GetPath(routes.INDEX_PRODUCT)) } class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
-							<span class="flex-1 ms-3 whitespace-nowrap">Products</span>
-						</a>
-					</li>
-				</ul>
-			</div>
-			<div>
-				<hr class="text-cgray"/>
-			</div>
+	<aside id="default-sidebar" class="bg-cblack text-cwhite pt-4 col-span-1 row-start-2 row-span-1" aria-label="Sidebar">
+		<div class="pt-20">
+			<hr class="text-cgray"/>
+		</div>
+		<div class="">
+			<ul class="font-medium">
+				<li>
+					<a
+						href={ templ.URL(routes.GetPath(routes.INDEX_SECTION)) }
+						class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group"
+					>
+						<span class="flex-1 ms-3 whitespace-nowrap">Sections</span>
+					</a>
+				</li>
+				<li>
+					<a
+						href={ templ.URL(routes.GetPath(routes.INDEX_CATEGORY)) }
+						class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group"
+					>
+						<span class="flex-1 ms-3 whitespace-nowrap">Categories</span>
+					</a>
+				</li>
+				<li>
+					<a
+						href={ templ.URL(routes.GetPath(routes.INDEX_PRODUCT)) }
+						class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group"
+					>
+						<span class="flex-1 ms-3 whitespace-nowrap">Products</span>
+					</a>
+				</li>
+				<li>
+					<a href="" class="flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group">
+						<span class="flex-1 ms-3 whitespace-nowrap">Menus</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<hr class="text-cgray"/>
 		</div>
 	</aside>
 }
@@ -50,22 +58,14 @@ templ Base(user database.User) {
 		<head>
 			<link rel="stylesheet" href="/static/css/tailwind.min.css"/>
 		</head>
-		<body class="overflow-hidden">
+		<body class="h-full grid grid-cols-base grid-rows-base">
 			@Topbar()
-			<div class="flex-grow h-full">
-				<div class="flex h-full">
-					@Sidebar(user)
-					<div class="flex-1 p-8 bg-clight-gray">
-						<div class="max-w-4xl mx-auto">
-							<main class="pt-10">
-								<div class="min-w-full">
-									{ children... }
-								</div>
-							</main>
-						</div>
-					</div>
+			@Sidebar(user)
+			<main class="bg-clight-gray row-start-2 col-start-2 row-span-1 col-span-1 flex justify-center">
+				<div class="w-full max-w-4xl pt-8">
+					{ children... }
 				</div>
-			</div>
+			</main>
 		</body>
 	</html>
 }

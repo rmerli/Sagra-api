@@ -96,7 +96,7 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PROUCT, product.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, product.Id))
 }
 
 type editProductPayload struct {
@@ -158,7 +158,7 @@ func (h ProductHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PROUCT, payload.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, payload.Id))
 }
 
 func NewProductHandler(service service.Product) ProductHandler {

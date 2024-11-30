@@ -28,7 +28,7 @@ func Topbar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><div class=\"block \"><div class=\"flex h-12 relative z-50 bg-white shadow-cwhite shadow-sm \"></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col-span-2 z-50 row-span-1 bg-white shadow-cwhite shadow-sm\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,7 +52,7 @@ func Sidebar(user database.User) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"default-sidebar\" class=\"relative z-10 bg-cblack text-cwhite pt-4\" aria-label=\"Sidebar\"><div class=\"w-64\"><div class=\"pt-20\"><hr class=\"text-cgray\"></div><div class=\"\"><ul class=\"font-medium\"><li><a href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"default-sidebar\" class=\"bg-cblack text-cwhite pt-4 col-span-1 row-start-2 row-span-1\" aria-label=\"Sidebar\"><div class=\"pt-20\"><hr class=\"text-cgray\"></div><div class=\"\"><ul class=\"font-medium\"><li><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,7 +79,7 @@ func Sidebar(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group\"><span class=\"flex-1 ms-3 whitespace-nowrap\">Products</span></a></li></ul></div><div><hr class=\"text-cgray\"></div></div></aside>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group\"><span class=\"flex-1 ms-3 whitespace-nowrap\">Products</span></a></li><li><a href=\"\" class=\"flex items-center p-2 hover:bg-cdark-gray hover:text-cwhite group\"><span class=\"flex-1 ms-3 whitespace-nowrap\">Menus</span></a></li></ul></div><div><hr class=\"text-cgray\"></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,7 +103,7 @@ func Base(user database.User) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><link rel=\"stylesheet\" href=\"/static/css/tailwind.min.css\"></head><body class=\"overflow-hidden\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><link rel=\"stylesheet\" href=\"/static/css/tailwind.min.css\"></head><body class=\"h-full grid grid-cols-base grid-rows-base\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,15 +111,11 @@ func Base(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-grow h-full\"><div class=\"flex h-full\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = Sidebar(user).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-1 p-8 bg-clight-gray\"><div class=\"max-w-4xl mx-auto\"><main class=\"pt-10\"><div class=\"min-w-full\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"bg-clight-gray row-start-2 col-start-2 row-span-1 col-span-1 flex justify-center\"><div class=\"w-full max-w-4xl pt-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,7 +123,7 @@ func Base(user database.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main></div></div></div></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

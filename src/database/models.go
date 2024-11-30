@@ -14,6 +14,20 @@ type Category struct {
 	SectionID pgtype.Int8
 }
 
+type Menu struct {
+	ID        int64
+	Name      string
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
+}
+
+type MenusCategory struct {
+	ID         int64
+	MenuID     int64
+	CategoryID int64
+	Sort       int32
+}
+
 type Product struct {
 	ID         int64
 	Name       string

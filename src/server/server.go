@@ -64,11 +64,13 @@ func (s *Server) setRoutes() {
 	categoryRepo := repository.NewCategoryRepository(s.db)
 	sectionRepo := repository.NewSectionRepository(s.db)
 	userRepo := repository.NewUserRepository(s.db)
+	menuRepo := repository.NewMenuRepository(s.db)
 
 	variantService := service.NewVariantService(&variantRepo)
 	productService := service.NewProductService(&productRepo)
 	categoryService := service.NewCategoryService(&categoryRepo)
 	sectionService := service.NewSectionService(&sectionRepo)
+	menuService := service.NewMenuService(&menuRepo)
 
 	authService := auth.NewAuthService(userRepo)
 
@@ -83,13 +85,16 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.Use(customMiddleware.Authenticated)
 	s.app.Use(customMiddleware.ResponseHeaders)
 
+	menuHandler := handler.NewMenuHandler(menuService)
+	authenticatedRoutes.GET("/menus", menuHandler.HandleIndex).Name = routes.INDEX_MENU
+
 	productHandler := handler.NewProductHandler(productService)
 	authenticatedRoutes.GET("/products", productHandler.HandleIndex).Name = routes.INDEX_PRODUCT
 	authenticatedRoutes.POST("/products", productHandler.HandleCreate).Name = routes.CREATE_PRODUCT
-	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PROUCT
+	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PRODUCT
 	authenticatedRoutes.GET("/products/new", productHandler.HandleNew).Name = routes.NEW_PRODUCT
-	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PROUCT
-	authenticatedRoutes.POST("/products/:id", productHandler.HandleUpdate).Name = routes.UPDATE_PROUCT
+	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PRODUCT
+	authenticatedRoutes.POST("/products/:id", productHandler.HandleUpdate).Name = routes.UPDATE_PRODUCT
 
 	sectionHandler := handler.NewSectionHandler(sectionService)
 	authenticatedRoutes.GET("/sections", sectionHandler.HandleIndex).Name = routes.INDEX_SECTION
