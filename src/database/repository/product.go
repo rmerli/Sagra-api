@@ -2,69 +2,40 @@ package repository
 
 import (
 	"context"
-	"gtmx/src/database"
 	"gtmx/src/database/model"
-	"math/big"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-type ProductRepository struct {
-	db *database.Queries
+type Product struct {
+	db *gorm.DB
 }
 
-func (r ProductRepository) List(ctx context.Context) ([]model.Product, error) {
-	products, err := r.db.ListProducts(ctx)
-	if err != nil {
-		return []model.Product{}, err
+func (p *Product) Get(ctx context.Context, id uuid.UUID) (model.Product, error) {
+	product := model.Product{ID: id}
+	result := p.db.WithContext(ctx).First(&product)
+	return product, result.Error
+}
 
+func (p *Product) Create(ctx context.Context, product model.Product) (model.Product, error) {
+	result := p.db.WithContext(ctx).Create(&product)
+	return product, result.Error
+}
+
+func (v *Product) Update(ctx context.Context, product model.Product) (model.Product, error) {
+	result := v.db.WithContext(ctx).Save(&product)
+	return product, result.Error
+}
+
+func (v *Product) GetAll(ctx context.Context) ([]model.Product, error) {
+	products := []model.Product{}
+	result := v.db.WithContext(ctx).Find(&products)
+	return products, result.Error
+}
+
+func NewProductRepository(db *gorm.DB) Product {
+	return Product{
+		db: db,
 	}
-
-	return model.NewProductList(products), nil
-}
-
-func (r ProductRepository) Get(ctx context.Context, id int64) (model.Product, error) {
-	product, err := r.db.GetProduct(ctx, id)
-
-	if err != nil {
-		return model.Product{}, err
-
-	}
-
-	return model.NewProduct(product.ID, product.Name, product.Abbr, product.Price), nil
-}
-
-func (r ProductRepository) Insert(ctx context.Context, product model.Product) (model.Product, error) {
-
-	insertedProduct, err := r.db.CreateProduct(ctx, database.CreateProductParams{
-		Name:  product.Name,
-		Abbr:  product.Abbr,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(product.Price * 100)), Exp: -2, Valid: true},
-	})
-
-	if err != nil {
-		return model.Product{}, err
-	}
-
-	product.Id = insertedProduct.ID
-	return product, nil
-}
-
-func (r ProductRepository) Update(ctx context.Context, product model.Product) (model.Product, error) {
-	_, err := r.db.UpdateProduct(ctx, database.UpdateProductParams{
-		ID:    product.Id,
-		Name:  product.Name,
-		Abbr:  product.Abbr,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(product.Price * 100)), Exp: -2, Valid: true},
-	})
-
-	if err != nil {
-		return model.Product{}, err
-	}
-
-	return product, err
-}
-
-func NewProductRepository(db *database.Queries) ProductRepository {
-	return ProductRepository{db: db}
 }

@@ -1,8 +1,8 @@
 package view
 
 import (
-	"gtmx/src/server/routes"
 	"gtmx/src/database/model"
+	"gtmx/src/server/routes"
 )
 
 templ IndexSection(sections []model.Section) {
@@ -13,7 +13,7 @@ templ IndexSection(sections []model.Section) {
 	for _, section := range sections {
 		<div>
 			{ section.Name }
-			<a href={ templ.URL(PathReplaceId(routes.EDIT_SECTION, section.Id)) }><button class="btn">edit </button></a>
+			<a href={ templ.URL(PathReplaceId(routes.EDIT_SECTION, section.ID)) }><button class="btn">edit </button></a>
 		</div>
 	}
 }

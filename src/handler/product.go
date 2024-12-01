@@ -9,11 +9,14 @@ import (
 	"gtmx/src/view/layout"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 )
 
 type ProductHandler struct {
-	productService *service.Product
+	productService  *service.Product
+	categoryService *service.Category
 }
 
 func (h ProductHandler) HandleIndex(c echo.Context) error {
@@ -32,7 +35,7 @@ func (h ProductHandler) HandleIndex(c echo.Context) error {
 }
 
 type showProductPayload struct {
-	Id int64 `param:"id"`
+	Id uuid.UUID `param:"id"`
 }
 
 func (h ProductHandler) HandleShow(c echo.Context) error {
@@ -54,6 +57,7 @@ func (h ProductHandler) HandleShow(c echo.Context) error {
 	}
 
 	return render(c, layout.ProtectedViews(user, view.ShowProduct(product)))
+
 }
 
 func (h ProductHandler) HandleNew(c echo.Context) error {
@@ -62,17 +66,23 @@ func (h ProductHandler) HandleNew(c echo.Context) error {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, view.NewProduct()))
+	categories, err := h.categoryService.GetAll(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return render(c, layout.ProtectedViews(user, view.NewProduct(categories)))
 }
 
 type createProductPayload struct {
-	Name  string  `form:"name"`
-	Abbr  string  `form:"abbr"`
-	Price float64 `form:"price"`
+	Name       string          `form:"name"`
+	Abbr       string          `form:"abbr"`
+	Price      decimal.Decimal `form:"price"`
+	CategoryID uuid.UUID       `form:"category_id"`
 }
 
 func (h ProductHandler) HandleCreate(c echo.Context) error {
-	user, err := auth.GetUser(c)
+	_, err := auth.GetUser(c)
 	if err != nil {
 		return err
 	}
@@ -82,13 +92,14 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 	err = c.Bind(&payload)
 	if err != nil {
 		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.NewProduct()))
+		return c.Redirect(http.StatusPermanentRedirect, routes.INDEX_PRODUCT)
 	}
 
 	product := model.Product{
-		Name:  c.FormValue("name"),
-		Abbr:  c.FormValue("abbr"),
-		Price: payload.Price,
+		Name:       payload.Name,
+		Abbr:       payload.Abbr,
+		Price:      payload.Price,
+		CategoryID: payload.CategoryID,
 	}
 
 	product, err = h.productService.Create(c.Request().Context(), product)
@@ -96,11 +107,11 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, product.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, product.ID))
 }
 
 type editProductPayload struct {
-	Id int64 `param:"id"`
+	Id uuid.UUID `param:"id"`
 }
 
 func (h ProductHandler) HandleEdit(c echo.Context) error {
@@ -125,10 +136,10 @@ func (h ProductHandler) HandleEdit(c echo.Context) error {
 }
 
 type updateProductPayload struct {
-	Id    int64   `param:"id"`
-	Name  string  `form:"name"`
-	Abbr  string  `form:"abbr"`
-	Price float64 `form:"price"`
+	Id    uuid.UUID       `param:"id"`
+	Name  string          `form:"name"`
+	Abbr  string          `form:"abbr"`
+	Price decimal.Decimal `form:"price"`
 }
 
 func (h ProductHandler) HandleUpdate(c echo.Context) error {
@@ -161,6 +172,9 @@ func (h ProductHandler) HandleUpdate(c echo.Context) error {
 	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, payload.Id))
 }
 
-func NewProductHandler(service service.Product) ProductHandler {
-	return ProductHandler{productService: &service}
+func NewProductHandler(service *service.Product, category *service.Category) ProductHandler {
+	return ProductHandler{
+		productService:  service,
+		categoryService: category,
+	}
 }

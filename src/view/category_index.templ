@@ -13,7 +13,11 @@ templ IndexCategory(categories []model.Category) {
 		<div>
 			{ category.Name }
 			{ category.Section.Name }
-			<a href={ templ.URL(PathReplaceId(routes.EDIT_CATEGORY, category.Id)) }><button class="btn">edit </button></a>
+			<a href={ templ.URL(PathReplaceId(routes.EDIT_CATEGORY, category.ID)) }>
+				<button class="btn">
+					edit
+				</button>
+			</a>
 		</div>
 	}
 }

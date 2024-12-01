@@ -2,67 +2,40 @@ package repository
 
 import (
 	"context"
-	"gtmx/src/database"
 	"gtmx/src/database/model"
-	"math/big"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-type VariantRepository struct {
-	db *database.Queries
+type Variant struct {
+	db *gorm.DB
 }
 
-func (r VariantRepository) List(ctx context.Context) ([]model.Variant, error) {
-	variants, err := r.db.ListVariants(ctx)
-	if err != nil {
-		return []model.Variant{}, err
+func (v *Variant) Get(ctx context.Context, id uuid.UUID) (model.Variant, error) {
+	variant := model.Variant{ID: id}
+	result := v.db.WithContext(ctx).First(&variant)
+	return variant, result.Error
+}
 
+func (v *Variant) Create(ctx context.Context, variant model.Variant) (model.Variant, error) {
+	result := v.db.WithContext(ctx).Create(&variant)
+	return variant, result.Error
+}
+
+func (v *Variant) Update(ctx context.Context, variant model.Variant) (model.Variant, error) {
+	result := v.db.WithContext(ctx).Save(&variant)
+	return variant, result.Error
+}
+
+func (v *Variant) GetAll(ctx context.Context) ([]model.Variant, error) {
+	variants := []model.Variant{}
+	result := v.db.WithContext(ctx).Find(&variants)
+	return variants, result.Error
+}
+
+func NewVariantRepository(db *gorm.DB) Variant {
+	return Variant{
+		db: db,
 	}
-
-	return model.NewVariantList(variants), nil
-}
-
-func (r VariantRepository) Get(ctx context.Context, id int64) (model.Variant, error) {
-	variant, err := r.db.GetVariant(ctx, id)
-
-	if err != nil {
-		return model.Variant{}, err
-
-	}
-
-	return model.NewVariant(variant.ID, variant.Name, variant.Price), nil
-}
-
-func (r VariantRepository) Insert(ctx context.Context, variant model.Variant) (model.Variant, error) {
-
-	insertedVariant, err := r.db.CreateVariant(ctx, database.CreateVariantParams{
-		Name:  variant.Name,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(variant.Price * 100)), Exp: -2, Valid: true},
-	})
-	if err != nil {
-		return model.Variant{}, err
-	}
-
-	variant.Id = insertedVariant.ID
-
-	return variant, nil
-}
-
-func (r VariantRepository) Update(ctx context.Context, variant model.Variant) (model.Variant, error) {
-
-	_, err := r.db.UpdateVariant(ctx, database.UpdateVariantParams{
-		ID:    variant.Id,
-		Name:  variant.Name,
-		Price: pgtype.Numeric{Int: big.NewInt(int64(variant.Price * 100)), Exp: -2, Valid: true},
-	})
-	if err != nil {
-		return model.Variant{}, err
-	}
-
-	return variant, nil
-}
-
-func NewVariantRepository(db *database.Queries) VariantRepository {
-	return VariantRepository{db: db}
 }

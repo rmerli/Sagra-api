@@ -4,28 +4,30 @@ import (
 	"context"
 	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
+
+	"github.com/google/uuid"
 )
 
 type Category struct {
-	Repo *repository.CategoryRepository
+	Repo *repository.Category
 }
 
-func (s *Category) Update(ctx context.Context, category model.Category) (model.Category, error) {
-	return s.Repo.Update(ctx, category)
+func (c *Category) Get(ctx context.Context, id uuid.UUID) (model.Category, error) {
+	return c.Repo.Get(ctx, id)
 }
 
-func (s *Category) Insert(ctx context.Context, category model.Category) (model.Category, error) {
-	return s.Repo.Insert(ctx, category)
+func (c *Category) Create(ctx context.Context, Category model.Category) (model.Category, error) {
+	return c.Repo.Create(ctx, Category)
 }
 
-func (s *Category) GetAll(ctx context.Context) ([]model.Category, error) {
-	return s.Repo.List(ctx)
+func (c *Category) Update(ctx context.Context, Category model.Category) (model.Category, error) {
+	return c.Repo.Update(ctx, Category)
 }
 
-func (s *Category) Get(ctx context.Context, id int64) (model.Category, error) {
-	return s.Repo.Get(ctx, id)
+func (c *Category) GetAll(ctx context.Context) ([]model.Category, error) {
+	return c.Repo.GetAll(ctx)
 }
 
-func NewCategoryService(repo *repository.CategoryRepository) Category {
+func NewCategoryService(repo *repository.Category) Category {
 	return Category{Repo: repo}
 }

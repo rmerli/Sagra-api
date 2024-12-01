@@ -5,8 +5,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"gtmx/src/database"
-	"gtmx/src/database/repository"
+	"gtmx/src/database/model"
+	"gtmx/src/service"
 	"math/big"
 	"math/rand"
 
@@ -17,7 +17,7 @@ import (
 )
 
 type AuthService struct {
-	repository repository.UserRepository
+	UserService *service.User
 }
 type ValidationError struct {
 	Key     string
@@ -28,40 +28,35 @@ func (e *ValidationError) Error() string {
 	return e.Message
 }
 
-func (s AuthService) RegisterUser(ctx context.Context, email string, password string) (database.User, error) {
+func (s AuthService) RegisterUser(ctx context.Context, email string, password string) (model.User, error) {
 	hash := md5.Sum(big.NewInt(rand.Int63()).Bytes())
 	salt := hex.EncodeToString(hash[:])
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("%s%s", password, salt)), 8)
 
 	if err != nil {
 		log.Error(err)
-		return database.User{}, err
+		return model.User{}, err
 	}
 
-	user := database.User{
+	user, err := s.UserService.Create(ctx, model.User{
 		Email:    email,
 		Password: string(hashedPassword),
 		Salt:     salt,
-	}
+	})
 
-	user, err = s.repository.InsertUser(ctx, user)
 	if err != nil {
-		return database.User{}, err
+		return model.User{}, err
 	}
 
 	return user, nil
 }
 
-func (s AuthService) GetRepository() repository.UserRepository {
-	return s.repository
+func NewAuthService(userService *service.User) AuthService {
+	return AuthService{UserService: userService}
 }
 
-func NewAuthService(repository repository.UserRepository) AuthService {
-	return AuthService{repository: repository}
-}
-
-func GetUser(c echo.Context) (database.User, error) {
+func GetUser(c echo.Context) (model.User, error) {
 	session, _ := session.Get("session-key", c)
 	user := session.Values["user"]
-	return user.(database.User), nil
+	return user.(model.User), nil
 }

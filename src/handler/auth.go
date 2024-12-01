@@ -15,7 +15,7 @@ import (
 )
 
 type AuthHandler struct {
-	AuthService authentication.AuthService
+	AuthService *authentication.AuthService
 }
 
 func (h AuthHandler) HandleSignUp(c echo.Context) error {
@@ -23,7 +23,7 @@ func (h AuthHandler) HandleSignUp(c echo.Context) error {
 		Email:    c.FormValue("email"),
 		Password: c.FormValue("password"),
 	}
-	err := bag.Validate(c.Request().Context(), h.AuthService.GetRepository())
+	err := bag.Validate(c.Request().Context(), h.AuthService.UserService)
 
 	if err != nil {
 		c.Response().Status = 400
@@ -77,7 +77,7 @@ func (h AuthHandler) HandleLogin(c echo.Context) error {
 	email := c.FormValue("email")
 	password := c.FormValue("password")
 
-	user, err := h.AuthService.GetRepository().GetUser(c.Request().Context(), email)
+	user, err := h.AuthService.UserService.GetByEmail(c.Request().Context(), email)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -117,4 +117,10 @@ func (h AuthHandler) HandleLogout(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusMovedPermanently, routes.GetPath(routes.LOGIN))
+}
+
+func NewAuthHandler(authService *authentication.AuthService) AuthHandler {
+	return AuthHandler{
+		AuthService: authService,
+	}
 }

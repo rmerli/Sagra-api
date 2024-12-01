@@ -3,7 +3,7 @@ package validator
 import (
 	"context"
 	"errors"
-	"gtmx/src/database/repository"
+	"gtmx/src/service"
 )
 
 type SignUp struct {
@@ -12,9 +12,9 @@ type SignUp struct {
 	Errors   map[string]string
 }
 
-func (v *SignUp) Validate(ctx context.Context, repo repository.UserRepository) error {
+func (v *SignUp) Validate(ctx context.Context, userService *service.User) error {
 	v.Errors = make(map[string]string)
-	_, err := repo.GetUser(ctx, v.Email)
+	_, err := userService.GetByEmail(ctx, v.Email)
 
 	if err == nil {
 		v.Errors["email"] = "Email address not available"

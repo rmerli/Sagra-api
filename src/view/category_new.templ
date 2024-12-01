@@ -1,9 +1,8 @@
 package view
 
 import (
-	"fmt"
-	"gtmx/src/server/routes"
 	"gtmx/src/database/model"
+	"gtmx/src/server/routes"
 )
 
 templ NewCategory(sections []model.Section) {
@@ -16,7 +15,7 @@ templ NewCategory(sections []model.Section) {
 			<select name="section_id" class="select select-bordered w-full max-w-xs">
 				<option disabled selected>Section</option>
 				for _, section := range sections {
-					<option value={ fmt.Sprintf("%d", section.Id) }>{ section.Name }</option>
+					<option value={ section.ID.String() }>{ section.Name }</option>
 				}
 			</select>
 		</div>

@@ -1,7 +1,6 @@
 package view
 
 import (
-	"fmt"
 	"gtmx/src/database/model"
 	"gtmx/src/server/routes"
 )
@@ -10,7 +9,7 @@ templ EditProduct(product model.Product) {
 	<div class="text-center">
 		Update New Product
 	</div>
-	<form action={ templ.URL(PathReplaceId(routes.UPDATE_PRODUCT, product.Id)) } method="POST">
+	<form action={ templ.URL(PathReplaceId(routes.UPDATE_PRODUCT, product.ID)) } method="POST">
 		<div>
 			<input
 				type="text"
@@ -35,7 +34,7 @@ templ EditProduct(product model.Product) {
 				step="0.01"
 				name="price"
 				placeholder="Price"
-				value={ fmt.Sprintf("%.2f", product.Price) }
+				value={ product.Price.StringFixed(2) }
 				class="input input-bordered w-full max-w-xs"
 			/>
 		</div>

@@ -1,25 +1,34 @@
 package view
 
 import (
-	"gtmx/src/server/routes"
-	"gtmx/src/database/model"
-
 	"fmt"
+	"gtmx/src/database/model"
+	"gtmx/src/server/routes"
 )
 
 templ EditVariant(variant model.Variant) {
 	<div class="text-center">
 		Edit Variant
 	</div>
-	<form
-		action={ templ.URL(PathReplaceId(routes.UPDATE_VARIANT, variant.Id)) }
-		method="POST"
-	>
+	<form action={ templ.URL(PathReplaceId(routes.UPDATE_VARIANT, variant.ID)) } method="POST">
 		<div>
-			<input type="text" name="name" placeholder="Name" value={ variant.Name } class="input input-bordered w-full max-w-xs"/>
+			<input
+				type="text"
+				name="name"
+				placeholder="Name"
+				value={ variant.Name }
+				class="input input-bordered w-full max-w-xs"
+			/>
 		</div>
 		<div>
-			<input type="number" step="0.01" name="price" value={ fmt.Sprintf("%.2f", variant.Price) } placeholder="Price" class="input input-bordered w-full max-w-xs"/>
+			<input
+				type="number"
+				step="0.01"
+				name="price"
+				value={ fmt.Sprintf("%.2f", variant.Price) }
+				placeholder="Price"
+				class="input input-bordered w-full max-w-xs"
+			/>
 		</div>
 		<button class="btn input-bordered">Save</button>
 	</form>

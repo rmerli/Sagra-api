@@ -4,28 +4,30 @@ import (
 	"context"
 	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
+
+	"github.com/google/uuid"
 )
 
 type Menu struct {
-	Repo *repository.MenuRepository
+	Repo *repository.Menu
 }
 
-func (s *Menu) Update(ctx context.Context, menu model.Menu) (model.Menu, error) {
-	return s.Repo.Update(ctx, menu)
+func (m *Menu) Get(ctx context.Context, id uuid.UUID) (model.Menu, error) {
+	return m.Repo.Get(ctx, id)
 }
 
-func (s *Menu) Create(ctx context.Context, menu model.Menu) (model.Menu, error) {
-	return s.Repo.Insert(ctx, menu)
+func (m *Menu) Create(ctx context.Context, Menu model.Menu) (model.Menu, error) {
+	return m.Repo.Create(ctx, Menu)
 }
 
-func (s *Menu) GetAll(ctx context.Context) ([]model.Menu, error) {
-	return s.Repo.List(ctx)
+func (m *Menu) Update(ctx context.Context, Menu model.Menu) (model.Menu, error) {
+	return m.Repo.Update(ctx, Menu)
 }
 
-func (s *Menu) Get(ctx context.Context, id int64) (model.Menu, error) {
-	return s.Repo.Get(ctx, id)
+func (m *Menu) GetAll(ctx context.Context) ([]model.Menu, error) {
+	return m.Repo.GetAll(ctx)
 }
 
-func NewMenuService(repo *repository.MenuRepository) Menu {
+func NewMenuService(repo *repository.Menu) Menu {
 	return Menu{Repo: repo}
 }

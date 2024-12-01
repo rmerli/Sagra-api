@@ -4,28 +4,30 @@ import (
 	"context"
 	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
+
+	"github.com/google/uuid"
 )
 
 type Variant struct {
-	Repo *repository.VariantRepository
+	Repo *repository.Variant
 }
 
-func (s *Variant) Update(ctx context.Context, variant model.Variant) (model.Variant, error) {
-	return s.Repo.Update(ctx, variant)
+func (v *Variant) Get(ctx context.Context, id uuid.UUID) (model.Variant, error) {
+	return v.Repo.Get(ctx, id)
 }
 
-func (s *Variant) Create(ctx context.Context, variant model.Variant) (model.Variant, error) {
-	return s.Repo.Insert(ctx, variant)
+func (v *Variant) Create(ctx context.Context, Variant model.Variant) (model.Variant, error) {
+	return v.Repo.Create(ctx, Variant)
 }
 
-func (s *Variant) GetAll(ctx context.Context) ([]model.Variant, error) {
-	return s.Repo.List(ctx)
+func (v *Variant) Update(ctx context.Context, Variant model.Variant) (model.Variant, error) {
+	return v.Repo.Update(ctx, Variant)
 }
 
-func (s *Variant) Get(ctx context.Context, id int64) (model.Variant, error) {
-	return s.Repo.Get(ctx, id)
+func (v *Variant) GetAll(ctx context.Context) ([]model.Variant, error) {
+	return v.Repo.GetAll(ctx)
 }
 
-func NewVariantService(repo *repository.VariantRepository) Variant {
+func NewVariantService(repo *repository.Variant) Variant {
 	return Variant{Repo: repo}
 }

@@ -37,7 +37,7 @@ const (
 
 	INDEX_MENU  = "index-menu"
 	CREATE_MENU = "create-menu"
-	SHOW_Mewnu  = "show-menu"
+	SHOW_MENU   = "show-menu"
 	EDIT_MENU   = "edit-menu"
 	UPDATE_MENU = "update-menu"
 	NEW_MENU    = "new-menu"

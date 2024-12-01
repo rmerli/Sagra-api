@@ -8,8 +8,8 @@ import (
 	"gtmx/src/view"
 	"gtmx/src/view/layout"
 	"net/http"
-	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -41,7 +41,7 @@ func (h CategoryHandler) HandleShow(c echo.Context) error {
 
 	idString := c.Param("id")
 
-	id, err := strconv.ParseInt(idString, 10, 64)
+	id, err := uuid.Parse(idString)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (h CategoryHandler) HandleNew(c echo.Context) error {
 
 func (h CategoryHandler) HandleCreate(c echo.Context) error {
 	idString := c.FormValue("section_id")
-	id, err := strconv.ParseInt(idString, 10, 64)
+	id, err := uuid.Parse(idString)
 	if err != nil {
 		return err
 	}
@@ -84,16 +84,16 @@ func (h CategoryHandler) HandleCreate(c echo.Context) error {
 		Section: section,
 	}
 
-	insertedCategory, err := h.categoryService.Insert(c.Request().Context(), p)
+	insertedCategory, err := h.categoryService.Create(c.Request().Context(), p)
 	if err != nil {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, insertedCategory.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, insertedCategory.ID))
 }
 
 type editCategoryPayload struct {
-	Id int64 `param:"id"`
+	Id uuid.UUID `param:"id"`
 }
 
 func (h CategoryHandler) HandleEdit(c echo.Context) error {
@@ -123,9 +123,9 @@ func (h CategoryHandler) HandleEdit(c echo.Context) error {
 }
 
 type updateCategoryPayload struct {
-	Id        int64  `param:"id"`
-	Name      string `form:"name"`
-	SectionID int64  `form:"section_id"`
+	Id        uuid.UUID `param:"id"`
+	Name      string    `form:"name"`
+	SectionID uuid.UUID `form:"section_id"`
 }
 
 func (h CategoryHandler) HandleUpdate(c echo.Context) error {
@@ -153,18 +153,17 @@ func (h CategoryHandler) HandleUpdate(c echo.Context) error {
 
 	category.Name = payload.Name
 	category.Section = section
-
-	category, err = h.categoryService.Update(c.Request().Context(), category)
+	updatedCategory, err := h.categoryService.Update(c.Request().Context(), category)
 	if err != nil {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, category.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, updatedCategory.ID))
 }
 
-func NewCategoryHandler(sectionService service.Section, categoryService service.Category) CategoryHandler {
+func NewCategoryHandler(sectionService *service.Section, categoryService *service.Category) CategoryHandler {
 	return CategoryHandler{
-		sectionService:  &sectionService,
-		categoryService: &categoryService,
+		sectionService:  sectionService,
+		categoryService: categoryService,
 	}
 }

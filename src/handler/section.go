@@ -9,6 +9,7 @@ import (
 	"gtmx/src/view/layout"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,7 +33,7 @@ func (h SectionHandler) HandleIndex(c echo.Context) error {
 }
 
 type showSectionPayload struct {
-	Id int64 `param:"id"`
+	ID uuid.UUID `param:"id"`
 }
 
 func (h SectionHandler) HandleShow(c echo.Context) error {
@@ -49,7 +50,7 @@ func (h SectionHandler) HandleShow(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	section, err := h.sectionService.Get(c.Request().Context(), payload.Id)
+	section, err := h.sectionService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
 		return err
 	}
@@ -58,8 +59,8 @@ func (h SectionHandler) HandleShow(c echo.Context) error {
 }
 
 type updateSectionPayload struct {
-	Id   int64  `param:"id"`
-	Name string `form:"name"`
+	ID   uuid.UUID `param:"id"`
+	Name string    `form:"name"`
 }
 
 func (h SectionHandler) HandleUpdate(c echo.Context) error {
@@ -75,7 +76,7 @@ func (h SectionHandler) HandleUpdate(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	s, err := h.sectionService.Get(c.Request().Context(), payload.Id)
+	s, err := h.sectionService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
 		return err
 	}
@@ -87,11 +88,11 @@ func (h SectionHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, s.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, s.ID))
 }
 
 type editSectionPayload struct {
-	Id int64 `param:"id"`
+	ID uuid.UUID `param:"id"`
 }
 
 func (h SectionHandler) HandleEdit(c echo.Context) error {
@@ -107,7 +108,7 @@ func (h SectionHandler) HandleEdit(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditSection(model.Section{})))
 	}
 
-	section, err := h.sectionService.Get(c.Request().Context(), payload.Id)
+	section, err := h.sectionService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
 		return err
 	}
@@ -146,11 +147,11 @@ func (h SectionHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, section.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_SECTION, section.ID))
 }
 
-func NewSectionHandler(sectionService service.Section) SectionHandler {
+func NewSectionHandler(sectionService *service.Section) SectionHandler {
 	return SectionHandler{
-		sectionService: &sectionService,
+		sectionService: sectionService,
 	}
 }

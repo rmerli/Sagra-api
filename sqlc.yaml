@@ -7,6 +7,13 @@ sql:
       # uri: "postgresql://sagra:sagra@localhost/sagra_go?sslmode=disable" 
     gen:
       go:
-        package: "database"
-        out: "src/database"
+        package: "repository"
+        out: "src/database/repository"
         sql_package: "pgx/v5"
+        overrides:
+          - db_type: "pg_catalog.numeric"
+            go_type: "github.com/shopspring/decimal.Decimal"
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"

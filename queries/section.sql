@@ -1,10 +1,16 @@
 -- name: GetSection :one
 SELECT * FROM sections
-WHERE id = $1 LIMIT 1;
+WHERE id = $1;
 
 -- name: ListSections :many
 SELECT * FROM sections
 ORDER BY name;
+
+-- name: GetSectionWithCategories :many
+SELECT sqlc.embed(sections), sqlc.embed(categories)
+FROM sections
+INNER JOIN categories ON categories.section_id = sections.id
+WHERE sections.id = $1;
 
 -- name: CreateSection :one
 INSERT INTO sections (name)

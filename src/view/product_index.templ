@@ -1,7 +1,6 @@
 package view
 
 import (
-	"fmt"
 	"gtmx/src/database/model"
 	"gtmx/src/server/routes"
 )
@@ -27,10 +26,10 @@ templ IndexProduct(products []model.Product) {
 					<td class="py-6 px-6 border-clight-light-gray border-b">{ product.Name }</td>
 					<td class="py-6 px-6 border-clight-light-gray border-b">{ product.Abbr }</td>
 					<td class="py-6 px-6 border-clight-light-gray border-b">
-						{ fmt.Sprintf("%.2f", product.Price) }
+						{ product.Price.StringFixed(2) }
 					</td>
 					<td class="py-6 px-6 border-clight-light-gray border-b">
-						<a href={ templ.URL(PathReplaceId(routes.EDIT_PRODUCT, product.Id)) }>
+						<a href={ templ.URL(PathReplaceId(routes.EDIT_PRODUCT, product.ID)) }>
 							<button class="btn">edit </button>
 						</a>
 					</td>

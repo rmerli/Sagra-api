@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"gtmx/src/database"
 	"gtmx/src/database/repository"
 	"gtmx/src/handler"
 	customMiddleware "gtmx/src/middleware"
@@ -17,11 +16,12 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"gorm.io/gorm"
 )
 
 type Server struct {
 	app         *echo.Echo
-	db          *database.Queries
+	db          *gorm.DB
 	store       *pgstore.PGStore
 	ServerReady chan bool
 }
@@ -59,22 +59,23 @@ func (s *Server) setRoutes() {
 		return nil
 	})
 
-	variantRepo := repository.NewVariantRepository(s.db)
-	productRepo := repository.NewProductRepository(s.db)
-	categoryRepo := repository.NewCategoryRepository(s.db)
-	sectionRepo := repository.NewSectionRepository(s.db)
-	userRepo := repository.NewUserRepository(s.db)
-	menuRepo := repository.NewMenuRepository(s.db)
+	userRepository := repository.NewUserRepository(s.db)
+	sectionRepository := repository.NewSectionRepository(s.db)
+	categoryRepository := repository.NewCategoryRepository(s.db)
+	menuRepository := repository.NewMenuRepository(s.db)
+	productRepository := repository.NewProductRepository(s.db)
+	variantRepository := repository.NewVariantRepository(s.db)
 
-	variantService := service.NewVariantService(&variantRepo)
-	productService := service.NewProductService(&productRepo)
-	categoryService := service.NewCategoryService(&categoryRepo)
-	sectionService := service.NewSectionService(&sectionRepo)
-	menuService := service.NewMenuService(&menuRepo)
+	variantService := service.NewVariantService(&variantRepository)
+	productService := service.NewProductService(&productRepository)
+	categoryService := service.NewCategoryService(&categoryRepository)
+	sectionService := service.NewSectionService(&sectionRepository)
+	menuService := service.NewMenuService(&menuRepository)
+	userService := service.NewUserService(&userRepository)
 
-	authService := auth.NewAuthService(userRepo)
+	authService := auth.NewAuthService(&userService)
 
-	authHandler := handler.AuthHandler{AuthService: authService}
+	authHandler := handler.NewAuthHandler(&authService)
 	s.app.GET("/signup", authHandler.HandleShowSignUp).Name = routes.SHOW_SIGN_UP
 	s.app.POST("/signup", authHandler.HandleSignUp).Name = routes.SIGN_UP
 	s.app.GET("/login", authHandler.HandleShowLogin).Name = routes.SHOW_LOGIN
@@ -85,10 +86,13 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.Use(customMiddleware.Authenticated)
 	s.app.Use(customMiddleware.ResponseHeaders)
 
-	menuHandler := handler.NewMenuHandler(menuService)
+	menuHandler := handler.NewMenuHandler(&menuService)
 	authenticatedRoutes.GET("/menus", menuHandler.HandleIndex).Name = routes.INDEX_MENU
+	authenticatedRoutes.GET("/menus/new", menuHandler.HandleNew).Name = routes.NEW_MENU
+	authenticatedRoutes.POST("/menus", menuHandler.HandleCreate).Name = routes.CREATE_MENU
+	authenticatedRoutes.GET("/menus/:id", menuHandler.HandleShow).Name = routes.SHOW_MENU
 
-	productHandler := handler.NewProductHandler(productService)
+	productHandler := handler.NewProductHandler(&productService, &categoryService)
 	authenticatedRoutes.GET("/products", productHandler.HandleIndex).Name = routes.INDEX_PRODUCT
 	authenticatedRoutes.POST("/products", productHandler.HandleCreate).Name = routes.CREATE_PRODUCT
 	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PRODUCT
@@ -96,7 +100,7 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PRODUCT
 	authenticatedRoutes.POST("/products/:id", productHandler.HandleUpdate).Name = routes.UPDATE_PRODUCT
 
-	sectionHandler := handler.NewSectionHandler(sectionService)
+	sectionHandler := handler.NewSectionHandler(&sectionService)
 	authenticatedRoutes.GET("/sections", sectionHandler.HandleIndex).Name = routes.INDEX_SECTION
 	authenticatedRoutes.POST("/sections", sectionHandler.HandleCreate).Name = routes.CREATE_SECTION
 	authenticatedRoutes.GET("/sections/:id", sectionHandler.HandleShow).Name = routes.SHOW_SECTION
@@ -104,15 +108,15 @@ func (s *Server) setRoutes() {
 	authenticatedRoutes.GET("/sections/:id/edit", sectionHandler.HandleEdit).Name = routes.EDIT_SECTION
 	authenticatedRoutes.POST("/sections/:id", sectionHandler.HandleUpdate).Name = routes.UPDATE_SECTION
 
-	categoryHandler := handler.NewCategoryHandler(sectionService, categoryService)
+	categoryHandler := handler.NewCategoryHandler(&sectionService, &categoryService)
 	authenticatedRoutes.GET("/categories", categoryHandler.HandleIndex).Name = routes.INDEX_CATEGORY
-	authenticatedRoutes.POST("/categoies", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
+	authenticatedRoutes.POST("/categories", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
 	authenticatedRoutes.GET("/categories/:id", categoryHandler.HandleShow).Name = routes.SHOW_CATEGORY
 	authenticatedRoutes.GET("/categories/new", categoryHandler.HandleNew).Name = routes.NEW_CATEGORY
 	authenticatedRoutes.GET("/categories/:id/edit", categoryHandler.HandleEdit).Name = routes.EDIT_CATEGORY
 	authenticatedRoutes.POST("/categories/:id", categoryHandler.HandleUpdate).Name = routes.UPDATE_CATEGORY
 
-	variantHandler := handler.NewVariantHandler(variantService)
+	variantHandler := handler.NewVariantHandler(&variantService)
 	authenticatedRoutes.GET("/variants", variantHandler.HandleIndex).Name = routes.INDEX_VARIANT
 	authenticatedRoutes.POST("/variants", variantHandler.HandleCreate).Name = routes.CREATE_VARIANT
 	authenticatedRoutes.GET("/variants/:id", variantHandler.HandleShow).Name = routes.SHOW_VARIANT
@@ -123,7 +127,7 @@ func (s *Server) setRoutes() {
 	routes.SetRoutesMap(s.app.Routes())
 }
 
-func New(db *database.Queries, store *pgstore.PGStore, serveReady chan bool) Server {
+func New(db *gorm.DB, store *pgstore.PGStore, serveReady chan bool) Server {
 	return Server{
 		app:         echo.New(),
 		store:       store,

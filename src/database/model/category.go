@@ -1,40 +1,14 @@
 package model
 
 import (
-	"gtmx/src/database"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Category struct {
-	Id      int64
-	Name    string
-	Section Section
-}
-
-func NewCategoryFromDatabase[T database.CategoryWithSection](category T) Category {
-	cat, sec := category.Get()
-	return Category{
-		Id:   cat.ID,
-		Name: cat.Name,
-		Section: Section{
-			Id:   sec.ID,
-			Name: sec.Name,
-		},
-	}
-}
-
-func NewCategory(id int64, name string, section Section) Category {
-	return Category{
-		Id:      id,
-		Name:    name,
-		Section: section,
-	}
-}
-
-func NewCategoryListFromDatabase[T database.CategoryWithSection](categoriesWithSections []T) []Category {
-	categories := make([]Category, len(categoriesWithSections))
-
-	for i, category := range categoriesWithSections {
-		categories[i] = NewCategoryFromDatabase(category)
-	}
-	return categories
+	gorm.Model
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name      string
+	SectionID uuid.UUID
+	Section   Section
 }

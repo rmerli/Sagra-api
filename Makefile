@@ -1,7 +1,6 @@
 run:
 	air
 build:
-	sqlc generate
 	templ generate
 	npx tailwindcss -i ./static/css/tailwind.css -o ./static/css/tailwind.min.css
 	go build -o bin/main cmd/main.go 

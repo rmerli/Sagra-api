@@ -8,9 +8,10 @@ import (
 	"gtmx/src/view"
 	"gtmx/src/view/layout"
 	"net/http"
-	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 )
 
 type VariantHandler struct {
@@ -40,7 +41,7 @@ func (h VariantHandler) HandleShow(c echo.Context) error {
 
 	idString := c.Param("id")
 
-	id, err := strconv.ParseInt(idString, 10, 64)
+	id, err := uuid.FromBytes([]byte(idString))
 	if err != nil {
 		return err
 	}
@@ -63,9 +64,7 @@ func (h VariantHandler) HandleNew(c echo.Context) error {
 }
 
 func (h VariantHandler) HandleCreate(c echo.Context) error {
-	priceString := c.FormValue("price")
-	price, err := strconv.ParseFloat(priceString, 64)
-
+	price, err := decimal.NewFromString(c.FormValue("price"))
 	if err != nil {
 		return err
 	}
@@ -80,11 +79,11 @@ func (h VariantHandler) HandleCreate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, insertedVariant.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, insertedVariant.ID))
 }
 
 type editVariantPayload struct {
-	Id int64 `param:"id"`
+	ID uuid.UUID `param:"id"`
 }
 
 func (h VariantHandler) HandleEdit(c echo.Context) error {
@@ -100,7 +99,7 @@ func (h VariantHandler) HandleEdit(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
 	}
 
-	variant, err := h.variantService.Get(c.Request().Context(), payload.Id)
+	variant, err := h.variantService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
 		return err
 	}
@@ -109,10 +108,10 @@ func (h VariantHandler) HandleEdit(c echo.Context) error {
 }
 
 type updateVariantPayload struct {
-	Id    int64   `param:"id"`
-	Name  string  `form:"name"`
-	Abbr  string  `form:"abbr"`
-	Price float64 `form:"price"`
+	ID    uuid.UUID       `param:"id"`
+	Name  string          `form:"name"`
+	Abbr  string          `form:"abbr"`
+	Price decimal.Decimal `form:"price"`
 }
 
 func (h VariantHandler) HandleUpdate(c echo.Context) error {
@@ -128,7 +127,7 @@ func (h VariantHandler) HandleUpdate(c echo.Context) error {
 		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
 	}
 
-	variant, err := h.variantService.Get(c.Request().Context(), payload.Id)
+	variant, err := h.variantService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
 		return err
 	}
@@ -141,11 +140,11 @@ func (h VariantHandler) HandleUpdate(c echo.Context) error {
 		return err
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, payload.Id))
+	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, payload.ID))
 }
 
-func NewVariantHandler(variantService service.Variant) VariantHandler {
+func NewVariantHandler(variantService *service.Variant) VariantHandler {
 	return VariantHandler{
-		variantService: &variantService,
+		variantService: variantService,
 	}
 }

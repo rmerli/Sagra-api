@@ -4,18 +4,20 @@ import (
 	"context"
 	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
+
+	"github.com/google/uuid"
 )
 
 type Section struct {
-	Repo *repository.SectionRepository
+	Repo *repository.Section
 }
 
-func (s *Section) Get(ctx context.Context, id int64) (model.Section, error) {
+func (s *Section) Get(ctx context.Context, id uuid.UUID) (model.Section, error) {
 	return s.Repo.Get(ctx, id)
 }
 
 func (s *Section) Create(ctx context.Context, section model.Section) (model.Section, error) {
-	return s.Repo.Insert(ctx, section)
+	return s.Repo.Create(ctx, section)
 }
 
 func (s *Section) Update(ctx context.Context, section model.Section) (model.Section, error) {
@@ -23,9 +25,9 @@ func (s *Section) Update(ctx context.Context, section model.Section) (model.Sect
 }
 
 func (s *Section) GetAll(ctx context.Context) ([]model.Section, error) {
-	return s.Repo.List(ctx)
+	return s.Repo.GetAll(ctx)
 }
 
-func NewSectionService(repo *repository.SectionRepository) Section {
+func NewSectionService(repo *repository.Section) Section {
 	return Section{Repo: repo}
 }

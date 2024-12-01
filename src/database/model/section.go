@@ -1,28 +1,12 @@
 package model
 
 import (
-	"gtmx/src/database"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Section struct {
-	Id   int64
+	gorm.Model
+	ID   uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name string
-}
-
-func NewSection(id int64, name string) Section {
-	return Section{
-		Id:   id,
-		Name: name,
-	}
-}
-
-func NewSectionList(dbSections []database.Section) []Section {
-	sections := make([]Section, len(dbSections))
-	for i, section := range dbSections {
-		sections[i] = Section{
-			Id:   section.ID,
-			Name: section.Name,
-		}
-	}
-	return sections
 }

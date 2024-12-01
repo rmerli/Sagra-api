@@ -5,11 +5,12 @@ import (
 	"gtmx/src/server/routes"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func PathReplaceId(path string, id int64) string {
-	return strings.Replace(routes.GetPath(path), ":id", fmt.Sprint(id), 1)
+func PathReplaceId(path string, id uuid.UUID) string {
+	return strings.Replace(routes.GetPath(path), ":id", id.String(), 1)
 }
 
 func FormatPrice(price pgtype.Numeric) string {

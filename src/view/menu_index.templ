@@ -8,7 +8,7 @@ import (
 templ IndexMenu(menus []model.Menu) {
 	<div>Menus</div>
 	<div class="text-right">
-		<a href={ templ.URL(routes.GetPath(routes.NEW_VARIANT)) }><button class="btn btn-primary">New Variant</button></a>
+		<a href={ templ.URL(routes.GetPath(routes.NEW_MENU)) }><button class="btn btn-primary">New Menu</button></a>
 	</div>
 	for _, menu := range menus {
 		<div>

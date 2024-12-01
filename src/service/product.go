@@ -4,28 +4,30 @@ import (
 	"context"
 	"gtmx/src/database/model"
 	"gtmx/src/database/repository"
+
+	"github.com/google/uuid"
 )
 
 type Product struct {
-	Repo *repository.ProductRepository
+	Repo *repository.Product
 }
 
-func (s *Product) Update(ctx context.Context, product model.Product) (model.Product, error) {
-	return s.Repo.Update(ctx, product)
+func (p *Product) Get(ctx context.Context, id uuid.UUID) (model.Product, error) {
+	return p.Repo.Get(ctx, id)
 }
 
-func (s *Product) Create(ctx context.Context, product model.Product) (model.Product, error) {
-	return s.Repo.Insert(ctx, product)
+func (p *Product) Create(ctx context.Context, Product model.Product) (model.Product, error) {
+	return p.Repo.Create(ctx, Product)
 }
 
-func (s *Product) GetAll(ctx context.Context) ([]model.Product, error) {
-	return s.Repo.List(ctx)
+func (p *Product) Update(ctx context.Context, Product model.Product) (model.Product, error) {
+	return p.Repo.Update(ctx, Product)
 }
 
-func (s *Product) Get(ctx context.Context, id int64) (model.Product, error) {
-	return s.Repo.Get(ctx, id)
+func (p *Product) GetAll(ctx context.Context) ([]model.Product, error) {
+	return p.Repo.GetAll(ctx)
 }
 
-func NewProductService(repo *repository.ProductRepository) Product {
+func NewProductService(repo *repository.Product) Product {
 	return Product{Repo: repo}
 }

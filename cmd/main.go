@@ -2,24 +2,33 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/gob"
 	"fmt"
-	"gtmx/src/database"
+	"gtmx/src/database/model"
 	"gtmx/src/server"
 	"log"
 	"os"
 	"time"
 
 	"github.com/antonlindstrom/pgstore"
-	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func run(ctx context.Context, getenv func(string) string) error {
-	conn, err := pgx.Connect(ctx, getenv("DB_URL"))
+
+	// conn, err := pgx.Connect(ctx, getenv("DB_URL"))
+
+	conn, err := sql.Open("pgx", getenv("DB_URL"))
 	if err != nil {
 		return err
 	}
+
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: conn,
+	}), &gorm.Config{})
 
 	store, err := pgstore.NewPGStore(getenv("DB_URL"), []byte(getenv("STORE_KEY")))
 	if err != nil {
@@ -28,11 +37,9 @@ func run(ctx context.Context, getenv func(string) string) error {
 
 	defer store.Close()
 
-	gob.Register(database.User{})
+	gob.Register(model.User{})
 
 	defer store.StopCleanup(store.Cleanup(time.Minute * 60 * 24))
-
-	db := database.New(conn)
 
 	serverReady := make(chan bool)
 	server := server.New(db, store, serverReady)
