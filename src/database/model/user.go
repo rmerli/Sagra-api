@@ -1,13 +1,9 @@
 package model
 
-import (
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-)
+import ()
 
 type User struct {
-	gorm.Model
-	ID       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Model
 	Email    string
 	Password string
 	Salt     string

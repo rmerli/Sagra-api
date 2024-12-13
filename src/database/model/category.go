@@ -2,13 +2,12 @@ package model
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type Category struct {
-	gorm.Model
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Model
 	Name      string
 	SectionID uuid.UUID
 	Section   Section
+	Products  []Product
 }

@@ -13,7 +13,8 @@ type Product struct {
 }
 
 func (p *Product) Get(ctx context.Context, id uuid.UUID) (model.Product, error) {
-	product := model.Product{ID: id}
+	product := model.Product{}
+	product.ID = id
 	result := p.db.WithContext(ctx).First(&product)
 	return product, result.Error
 }

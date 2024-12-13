@@ -2,11 +2,7 @@ package handler
 
 import (
 	"gtmx/src/database/model"
-	"gtmx/src/server/routes"
 	"gtmx/src/service"
-	"gtmx/src/service/auth"
-	"gtmx/src/view"
-	"gtmx/src/view/layout"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -19,107 +15,61 @@ type CategoryHandler struct {
 }
 
 func (h CategoryHandler) HandleIndex(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	categories, err := h.categoryService.GetAll(c.Request().Context())
-
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	return render(c, layout.ProtectedViews(user, view.IndexCategory(categories)))
+	return c.JSON(http.StatusOK, categories)
+}
+
+type showCategoryPayload struct {
+	ID uuid.UUID `param:"id"`
 }
 
 func (h CategoryHandler) HandleShow(c echo.Context) error {
-	user, err := auth.GetUser(c)
+	var payload showCategoryPayload
+	err := c.Bind(&payload)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	idString := c.Param("id")
-
-	id, err := uuid.Parse(idString)
+	category, err := h.categoryService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
-	category, err := h.categoryService.Get(c.Request().Context(), id)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.ShowCategory(category)))
+	return c.JSON(http.StatusOK, category)
 }
 
-func (h CategoryHandler) HandleNew(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	sections, err := h.sectionService.GetAll(c.Request().Context())
-	if err != nil {
-		return err
-	}
-	return render(c, layout.ProtectedViews(user, view.NewCategory(sections)))
+type createCategoryPayload struct {
+	Name      string    `json:"name"`
+	SectionId uuid.UUID `json:"section_id"`
 }
 
 func (h CategoryHandler) HandleCreate(c echo.Context) error {
-	idString := c.FormValue("section_id")
-	id, err := uuid.Parse(idString)
+	var payload createCategoryPayload
+	err := c.Bind(&payload)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	section, err := h.sectionService.Get(c.Request().Context(), id)
+	section, err := h.sectionService.Get(c.Request().Context(), payload.SectionId)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	p := model.Category{
-		Name:    c.FormValue("name"),
+	category := model.Category{
+		Name:    payload.Name,
 		Section: section,
 	}
 
-	insertedCategory, err := h.categoryService.Create(c.Request().Context(), p)
+	insertedCategory, err := h.categoryService.Create(c.Request().Context(), category)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, insertedCategory.ID))
-}
-
-type editCategoryPayload struct {
-	Id uuid.UUID `param:"id"`
-}
-
-func (h CategoryHandler) HandleEdit(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	var payload editCategoryPayload
-	err = c.Bind(&payload)
-	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditCategory(model.Category{}, nil)))
-	}
-
-	category, err := h.categoryService.Get(c.Request().Context(), payload.Id)
-	if err != nil {
-		return err
-	}
-
-	sections, err := h.sectionService.GetAll(c.Request().Context())
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.EditCategory(category, sections)))
+	return c.JSON(http.StatusCreated, insertedCategory)
 }
 
 type updateCategoryPayload struct {
@@ -129,36 +79,30 @@ type updateCategoryPayload struct {
 }
 
 func (h CategoryHandler) HandleUpdate(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload updateCategoryPayload
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditCategory(model.Category{}, nil)))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	category, err := h.categoryService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
 	section, err := h.sectionService.Get(c.Request().Context(), payload.SectionID)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	category.Name = payload.Name
 	category.Section = section
 	updatedCategory, err := h.categoryService.Update(c.Request().Context(), category)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_CATEGORY, updatedCategory.ID))
+	return c.JSON(http.StatusOK, updatedCategory)
 }
 
 func NewCategoryHandler(sectionService *service.Section, categoryService *service.Category) CategoryHandler {

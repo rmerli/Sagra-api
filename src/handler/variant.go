@@ -2,11 +2,7 @@ package handler
 
 import (
 	"gtmx/src/database/model"
-	"gtmx/src/server/routes"
 	"gtmx/src/service"
-	"gtmx/src/service/auth"
-	"gtmx/src/view"
-	"gtmx/src/view/layout"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -19,84 +15,25 @@ type VariantHandler struct {
 }
 
 func (h VariantHandler) HandleIndex(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	variants, err := h.variantService.GetAll(c.Request().Context())
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	return render(c, layout.ProtectedViews(user, view.IndexVariant(variants)))
+	return c.JSON(http.StatusOK, variants)
 }
 
-func (h VariantHandler) HandleShow(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	idString := c.Param("id")
-
-	id, err := uuid.FromBytes([]byte(idString))
-	if err != nil {
-		return err
-	}
-
-	variant, err := h.variantService.Get(c.Request().Context(), id)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.ShowVariant(variant)))
-}
-
-func (h VariantHandler) HandleNew(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.NewVariant()))
-}
-
-func (h VariantHandler) HandleCreate(c echo.Context) error {
-	price, err := decimal.NewFromString(c.FormValue("price"))
-	if err != nil {
-		return err
-	}
-
-	p := model.Variant{
-		Name:  c.FormValue("name"),
-		Price: price,
-	}
-
-	insertedVariant, err := h.variantService.Create(c.Request().Context(), p)
-	if err != nil {
-		return err
-	}
-
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, insertedVariant.ID))
-}
-
-type editVariantPayload struct {
+type showVariantPayload struct {
 	ID uuid.UUID `param:"id"`
 }
 
-func (h VariantHandler) HandleEdit(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
+func (h VariantHandler) HandleShow(c echo.Context) error {
 
-	var payload editVariantPayload
-	err = c.Bind(&payload)
+	var payload showVariantPayload
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	variant, err := h.variantService.Get(c.Request().Context(), payload.ID)
@@ -104,7 +41,32 @@ func (h VariantHandler) HandleEdit(c echo.Context) error {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, view.EditVariant(variant)))
+	return c.JSON(http.StatusOK, variant)
+}
+
+type createVariantPayload struct {
+	Name  string          `json:"name"`
+	Price decimal.Decimal `json:"price"`
+}
+
+func (h VariantHandler) HandleCreate(c echo.Context) error {
+	var payload createVariantPayload
+	err := c.Bind(&payload)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	p := model.Variant{
+		Name:  payload.Name,
+		Price: payload.Price,
+	}
+
+	insertedVariant, err := h.variantService.Create(c.Request().Context(), p)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
+	}
+
+	return c.JSON(http.StatusCreated, insertedVariant)
 }
 
 type updateVariantPayload struct {
@@ -115,21 +77,15 @@ type updateVariantPayload struct {
 }
 
 func (h VariantHandler) HandleUpdate(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload updateVariantPayload
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditVariant(model.Variant{})))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	variant, err := h.variantService.Get(c.Request().Context(), payload.ID)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
 	variant.Name = payload.Name
@@ -137,10 +93,10 @@ func (h VariantHandler) HandleUpdate(c echo.Context) error {
 
 	variant, err = h.variantService.Update(c.Request().Context(), variant)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_VARIANT, payload.ID))
+	return c.JSON(http.StatusOK, variant)
 }
 
 func NewVariantHandler(variantService *service.Variant) VariantHandler {

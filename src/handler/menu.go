@@ -2,68 +2,42 @@ package handler
 
 import (
 	"gtmx/src/database/model"
-	"gtmx/src/server/routes"
 	"gtmx/src/service"
-	"gtmx/src/service/auth"
 	"gtmx/src/types"
-	"gtmx/src/view"
-	"gtmx/src/view/layout"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type MenuHandler struct {
-	menuService *service.Menu
+	menuService     *service.Menu
+	categoryService *service.Category
 }
 
 func (h MenuHandler) HandleIndex(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	menus, err := h.menuService.GetAll(c.Request().Context())
 
 	if err != nil {
 		return err
 	}
 
-	return render(c, layout.ProtectedViews(user, view.IndexMenu(menus)))
-}
-
-func (h MenuHandler) HandleNew(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.NewMenu()))
+	return c.JSON(http.StatusOK, menus)
 }
 
 type createMenuPayload struct {
-	Name  string     `form:"name"`
-	Start types.Date `form:"start"`
-	End   types.Date `form:"end"`
+	Name  string     `json:"name"`
+	Start types.Date `json:"start"`
+	End   types.Date `json:"end"`
 }
 
 func (h MenuHandler) HandleCreate(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload createMenuPayload
-
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		log.Error(err.Error())
-		return render(c, layout.ProtectedViews(user, view.NewMenu()))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	menu := model.Menu{
@@ -73,11 +47,49 @@ func (h MenuHandler) HandleCreate(c echo.Context) error {
 	}
 
 	menu, err = h.menuService.Create(c.Request().Context(), menu)
+
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_MENU, menu.ID))
+	return c.JSON(http.StatusCreated, menu)
+}
+
+type updateMenuPayload struct {
+	Id         uuid.UUID   `param:"id"`
+	Name       string      `json:"name"`
+	Start      types.Date  `json:"start"`
+	End        types.Date  `json:"end"`
+	Categories []uuid.UUID `json:"categories"`
+}
+
+func (h MenuHandler) HandleUpdate(c echo.Context) error {
+	var payload updateMenuPayload
+	err := c.Bind(&payload)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	menu, err := h.menuService.Get(c.Request().Context(), payload.Id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound)
+	}
+
+	menu.Name = payload.Name
+	menu.StartDate = pgtype.Date{Time: time.Time(payload.Start), Valid: true}
+	menu.EndDate = pgtype.Date{Time: time.Time(payload.End), Valid: true}
+
+	categories, err := h.categoryService.Repo.GetByIds(c.Request().Context(), payload.Categories)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	menu, err = h.menuService.Update(c.Request().Context(), menu, categories)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
+	}
+
+	return c.JSON(http.StatusOK, menu)
 }
 
 type showMenuPayload struct {
@@ -85,28 +97,23 @@ type showMenuPayload struct {
 }
 
 func (h MenuHandler) HandleShow(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload showMenuPayload
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.ShowMenu(model.Menu{})))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	menu, err := h.menuService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
-	return render(c, layout.ProtectedViews(user, view.ShowMenu(menu)))
+	return c.JSON(http.StatusOK, menu)
 }
 
-func NewMenuHandler(menuService *service.Menu) MenuHandler {
+func NewMenuHandler(menuService *service.Menu, categoryService *service.Category) MenuHandler {
 	return MenuHandler{
-		menuService: menuService,
+		menuService:     menuService,
+		categoryService: categoryService,
 	}
 }

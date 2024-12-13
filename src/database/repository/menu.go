@@ -13,13 +13,14 @@ type Menu struct {
 }
 
 func (m *Menu) Get(ctx context.Context, id uuid.UUID) (model.Menu, error) {
-	menu := model.Menu{ID: id}
-	result := m.db.WithContext(ctx).First(&menu)
+	menu := model.Menu{}
+	menu.ID = id
+	result := m.db.WithContext(ctx).Preload("Categories").First(&menu)
 	return menu, result.Error
 }
 
 func (m *Menu) Create(ctx context.Context, menu model.Menu) (model.Menu, error) {
-	result := m.db.WithContext(ctx).Create(&menu)
+	result := m.db.WithContext(ctx).Omit("Categories").Create(&menu)
 	return menu, result.Error
 }
 

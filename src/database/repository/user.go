@@ -13,7 +13,8 @@ type User struct {
 }
 
 func (v *User) Get(ctx context.Context, id uuid.UUID) (model.User, error) {
-	user := model.User{ID: id}
+	user := model.User{}
+	user.ID = id
 	result := v.db.WithContext(ctx).First(&user)
 	return user, result.Error
 }

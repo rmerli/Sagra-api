@@ -2,11 +2,7 @@ package handler
 
 import (
 	"gtmx/src/database/model"
-	"gtmx/src/server/routes"
 	"gtmx/src/service"
-	"gtmx/src/service/auth"
-	"gtmx/src/view"
-	"gtmx/src/view/layout"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -20,18 +16,12 @@ type ProductHandler struct {
 }
 
 func (h ProductHandler) HandleIndex(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	products, err := h.productService.GetAll(c.Request().Context())
-
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
-	return render(c, layout.ProtectedViews(user, view.IndexProduct(products)))
+	return c.JSON(http.StatusOK, products)
 }
 
 type showProductPayload struct {
@@ -39,39 +29,18 @@ type showProductPayload struct {
 }
 
 func (h ProductHandler) HandleShow(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload showProductPayload
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.ShowProduct(model.Product{})))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	product, err := h.productService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
-	return render(c, layout.ProtectedViews(user, view.ShowProduct(product)))
-
-}
-
-func (h ProductHandler) HandleNew(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	categories, err := h.categoryService.GetAll(c.Request().Context())
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.NewProduct(categories)))
+	return c.JSON(http.StatusOK, product)
 }
 
 type createProductPayload struct {
@@ -82,17 +51,11 @@ type createProductPayload struct {
 }
 
 func (h ProductHandler) HandleCreate(c echo.Context) error {
-	_, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload createProductPayload
 
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return c.Redirect(http.StatusPermanentRedirect, routes.INDEX_PRODUCT)
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	product := model.Product{
@@ -104,35 +67,10 @@ func (h ProductHandler) HandleCreate(c echo.Context) error {
 
 	product, err = h.productService.Create(c.Request().Context(), product)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, product.ID))
-}
-
-type editProductPayload struct {
-	Id uuid.UUID `param:"id"`
-}
-
-func (h ProductHandler) HandleEdit(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
-	var payload editProductPayload
-	err = c.Bind(&payload)
-	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditProduct(model.Product{})))
-	}
-
-	product, err := h.productService.Get(c.Request().Context(), payload.Id)
-	if err != nil {
-		return err
-	}
-
-	return render(c, layout.ProtectedViews(user, view.EditProduct(product)))
+	return c.JSON(http.StatusCreated, product)
 }
 
 type updateProductPayload struct {
@@ -143,21 +81,15 @@ type updateProductPayload struct {
 }
 
 func (h ProductHandler) HandleUpdate(c echo.Context) error {
-	user, err := auth.GetUser(c)
-	if err != nil {
-		return err
-	}
-
 	var payload updateProductPayload
-	err = c.Bind(&payload)
+	err := c.Bind(&payload)
 	if err != nil {
-		c.Response().Status = http.StatusBadRequest
-		return render(c, layout.ProtectedViews(user, view.EditProduct(model.Product{})))
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	product, err := h.productService.Get(c.Request().Context(), payload.Id)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusNotFound)
 	}
 
 	product.Name = payload.Name
@@ -166,10 +98,10 @@ func (h ProductHandler) HandleUpdate(c echo.Context) error {
 
 	product, err = h.productService.Update(c.Request().Context(), product)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusUnprocessableEntity)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, view.PathReplaceId(routes.SHOW_PRODUCT, payload.Id))
+	return c.JSON(http.StatusOK, product)
 }
 
 func NewProductHandler(service *service.Product, category *service.Category) ProductHandler {

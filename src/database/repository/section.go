@@ -13,7 +13,8 @@ type Section struct {
 }
 
 func (s *Section) Get(ctx context.Context, id uuid.UUID) (model.Section, error) {
-	section := model.Section{ID: id}
+	section := model.Section{}
+	section.ID = id
 	result := s.db.WithContext(ctx).First(&section)
 	return section, result.Error
 }

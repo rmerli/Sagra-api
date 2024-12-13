@@ -76,52 +76,41 @@ func (s *Server) setRoutes() {
 	authService := auth.NewAuthService(&userService)
 
 	authHandler := handler.NewAuthHandler(&authService)
-	s.app.GET("/signup", authHandler.HandleShowSignUp).Name = routes.SHOW_SIGN_UP
 	s.app.POST("/signup", authHandler.HandleSignUp).Name = routes.SIGN_UP
-	s.app.GET("/login", authHandler.HandleShowLogin).Name = routes.SHOW_LOGIN
 	s.app.POST("/login", authHandler.HandleLogin).Name = routes.LOGIN
 	s.app.GET("/logout", authHandler.HandleLogout).Name = routes.LOGOUT
 
 	authenticatedRoutes := s.app.Group("/admin")
 	authenticatedRoutes.Use(customMiddleware.Authenticated)
-	s.app.Use(customMiddleware.ResponseHeaders)
 
-	menuHandler := handler.NewMenuHandler(&menuService)
+	menuHandler := handler.NewMenuHandler(&menuService, &categoryService)
 	authenticatedRoutes.GET("/menus", menuHandler.HandleIndex).Name = routes.INDEX_MENU
-	authenticatedRoutes.GET("/menus/new", menuHandler.HandleNew).Name = routes.NEW_MENU
 	authenticatedRoutes.POST("/menus", menuHandler.HandleCreate).Name = routes.CREATE_MENU
 	authenticatedRoutes.GET("/menus/:id", menuHandler.HandleShow).Name = routes.SHOW_MENU
+	authenticatedRoutes.POST("/menus/:id", menuHandler.HandleUpdate).Name = routes.UPDATE_MENU
 
 	productHandler := handler.NewProductHandler(&productService, &categoryService)
 	authenticatedRoutes.GET("/products", productHandler.HandleIndex).Name = routes.INDEX_PRODUCT
 	authenticatedRoutes.POST("/products", productHandler.HandleCreate).Name = routes.CREATE_PRODUCT
 	authenticatedRoutes.GET("/products/:id", productHandler.HandleShow).Name = routes.SHOW_PRODUCT
-	authenticatedRoutes.GET("/products/new", productHandler.HandleNew).Name = routes.NEW_PRODUCT
-	authenticatedRoutes.GET("/products/:id/edit", productHandler.HandleEdit).Name = routes.EDIT_PRODUCT
 	authenticatedRoutes.POST("/products/:id", productHandler.HandleUpdate).Name = routes.UPDATE_PRODUCT
 
 	sectionHandler := handler.NewSectionHandler(&sectionService)
 	authenticatedRoutes.GET("/sections", sectionHandler.HandleIndex).Name = routes.INDEX_SECTION
 	authenticatedRoutes.POST("/sections", sectionHandler.HandleCreate).Name = routes.CREATE_SECTION
 	authenticatedRoutes.GET("/sections/:id", sectionHandler.HandleShow).Name = routes.SHOW_SECTION
-	authenticatedRoutes.GET("/sections/new", sectionHandler.HandleNew).Name = routes.NEW_SECTION
-	authenticatedRoutes.GET("/sections/:id/edit", sectionHandler.HandleEdit).Name = routes.EDIT_SECTION
 	authenticatedRoutes.POST("/sections/:id", sectionHandler.HandleUpdate).Name = routes.UPDATE_SECTION
 
 	categoryHandler := handler.NewCategoryHandler(&sectionService, &categoryService)
 	authenticatedRoutes.GET("/categories", categoryHandler.HandleIndex).Name = routes.INDEX_CATEGORY
 	authenticatedRoutes.POST("/categories", categoryHandler.HandleCreate).Name = routes.CREATE_CATEGORY
 	authenticatedRoutes.GET("/categories/:id", categoryHandler.HandleShow).Name = routes.SHOW_CATEGORY
-	authenticatedRoutes.GET("/categories/new", categoryHandler.HandleNew).Name = routes.NEW_CATEGORY
-	authenticatedRoutes.GET("/categories/:id/edit", categoryHandler.HandleEdit).Name = routes.EDIT_CATEGORY
 	authenticatedRoutes.POST("/categories/:id", categoryHandler.HandleUpdate).Name = routes.UPDATE_CATEGORY
 
 	variantHandler := handler.NewVariantHandler(&variantService)
 	authenticatedRoutes.GET("/variants", variantHandler.HandleIndex).Name = routes.INDEX_VARIANT
 	authenticatedRoutes.POST("/variants", variantHandler.HandleCreate).Name = routes.CREATE_VARIANT
 	authenticatedRoutes.GET("/variants/:id", variantHandler.HandleShow).Name = routes.SHOW_VARIANT
-	authenticatedRoutes.GET("/variants/new", variantHandler.HandleNew).Name = routes.NEW_VARIANT
-	authenticatedRoutes.GET("/variants/:id/edit", variantHandler.HandleEdit).Name = routes.EDIT_VARIANT
 	authenticatedRoutes.POST("/variants/:id", variantHandler.HandleUpdate).Name = routes.UPDATE_VARIANT
 
 	routes.SetRoutesMap(s.app.Routes())

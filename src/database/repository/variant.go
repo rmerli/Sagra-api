@@ -13,7 +13,8 @@ type Variant struct {
 }
 
 func (v *Variant) Get(ctx context.Context, id uuid.UUID) (model.Variant, error) {
-	variant := model.Variant{ID: id}
+	variant := model.Variant{}
+	variant.ID = id
 	result := v.db.WithContext(ctx).First(&variant)
 	return variant, result.Error
 }

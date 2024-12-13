@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS sections (
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT NULL,
 	deleted_at TIMESTAMP
-
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -49,7 +48,7 @@ CREATE TABLE IF NOT EXISTS menus (
 	deleted_at TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS menus_categories (
+CREATE TABLE IF NOT EXISTS menu_categories (
 	id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 	menu_id UUID NOT NULL, 
 	category_id UUID NOT NULL, 
@@ -57,9 +56,22 @@ CREATE TABLE IF NOT EXISTS menus_categories (
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT NULL,
 	deleted_at TIMESTAMP,
-	CONSTRAINT fk_menus_categories_menu FOREIGN KEY(menu_id) REFERENCES menus(id),
-	CONSTRAINT fk_menus_categories_category FOREIGN KEY(category_id) REFERENCES categories(id),
-	CONSTRAINT unique_menu_category UNIQUE (menu_id,category_id)
+	CONSTRAINT fk_menu_categories_menu FOREIGN KEY(menu_id) REFERENCES menus(id),
+	CONSTRAINT fk_menu_categories_category FOREIGN KEY(category_id) REFERENCES categories(id),
+	CONSTRAINT unique_menu_categories UNIQUE (menu_id,category_id)
+);
+
+CREATE TABLE IF NOT EXISTS menu_categories_products (
+	id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+	menu_category_id UUID NOT NULL, 
+	product_id UUID NOT NULL, 
+	sort INT NOT NULL,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP NOT NULL,
+	deleted_at TIMESTAMP,
+	CONSTRAINT fk_menus_categories_products_menu_categories FOREIGN KEY(menu_category_id) REFERENCES menu_categories(id),
+	CONSTRAINT fk_menu_categories_products_products FOREIGN KEY(product_id) REFERENCES products(id),
+	CONSTRAINT unique_menu_categories_products_product UNIQUE (menu_category_id,product_id)
 );
 
 CREATE TABLE IF NOT EXISTS products_variants (
@@ -85,9 +97,10 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- +migrate Down
+DROP TABLE IF EXISTS menu_categories_products;
+DROP TABLE IF EXISTS menu_categories;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS products_variants;
-DROP TABLE IF EXISTS menus_categories;
 DROP TABLE IF EXISTS variants;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;

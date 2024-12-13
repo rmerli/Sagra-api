@@ -13,7 +13,9 @@ type Category struct {
 }
 
 func (c *Category) Get(ctx context.Context, id uuid.UUID) (model.Category, error) {
-	category := model.Category{ID: id}
+	category := model.Category{}
+	category.ID = id
+
 	result := c.db.WithContext(ctx).First(&category)
 	return category, result.Error
 }
@@ -31,6 +33,13 @@ func (c *Category) Update(ctx context.Context, category model.Category) (model.C
 func (c *Category) GetAll(ctx context.Context) ([]model.Category, error) {
 	categories := []model.Category{}
 	result := c.db.WithContext(ctx).Preload("Section").Find(&categories)
+	return categories, result.Error
+}
+
+func (c *Category) GetByIds(ctx context.Context, ids []uuid.UUID) ([]model.Category, error) {
+	categories := []model.Category{}
+
+	result := c.db.WithContext(ctx).Preload("Section").Find(&categories, ids)
 	return categories, result.Error
 }
 
