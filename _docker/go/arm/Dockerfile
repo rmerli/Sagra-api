@@ -1,18 +1,15 @@
-FROM ricmerli/sagre-arm:0.0.1 as builder
+FROM ricmerli/sagre-arm:0.0.1 AS builder
 
 WORKDIR /src/app
 COPY ./ ./
 
-RUN ls -la
-
 RUN make build
 
-FROM alpine:3.14 as prod
-
-RUN go install github.com/rubenv/sql-migrate/...@v1.6.1
+FROM alpine:3.14 AS prod
 
 WORKDIR /src/app
 COPY --from=builder /src/app ./
+COPY --from=builder ~/go/bin/sql-migrate ./sql-migrate
 
 ARG DB_URL
 ARG STORE_KEY
