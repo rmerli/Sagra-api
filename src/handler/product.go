@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"gtmx/src/database/model"
-	"gtmx/src/service"
 	"net/http"
+	"sagre/src/database/model"
+	"sagre/src/service"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"

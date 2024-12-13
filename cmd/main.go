@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"encoding/gob"
 	"fmt"
-	"gtmx/src/database/model"
-	"gtmx/src/server"
 	"log"
 	"os"
+	"sagre/src/database/model"
+	"sagre/src/server"
 	"time"
 
 	"github.com/antonlindstrom/pgstore"

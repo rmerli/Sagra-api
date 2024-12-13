@@ -2,14 +2,14 @@ package server
 
 import (
 	"context"
-	"gtmx/src/database/repository"
-	"gtmx/src/handler"
-	customMiddleware "gtmx/src/middleware"
-	"gtmx/src/server/routes"
-	"gtmx/src/service"
-	"gtmx/src/service/auth"
 	"os"
 	"os/signal"
+	"sagre/src/database/repository"
+	"sagre/src/handler"
+	customMiddleware "sagre/src/middleware"
+	"sagre/src/server/routes"
+	"sagre/src/service"
+	"sagre/src/service/auth"
 	"time"
 
 	"github.com/antonlindstrom/pgstore"

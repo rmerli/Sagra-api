@@ -5,10 +5,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"gtmx/src/database/model"
-	"gtmx/src/service"
 	"math/big"
 	"math/rand"
+	"sagre/src/database/model"
+	"sagre/src/service"
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"

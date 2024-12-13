@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"gtmx/src/database/model"
-	"gtmx/src/database/repository"
+	"sagre/src/database/model"
+	"sagre/src/database/repository"
 
 	"github.com/google/uuid"
 )

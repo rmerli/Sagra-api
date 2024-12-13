@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"gtmx/src/server/routes"
-	authentication "gtmx/src/service/auth"
-	"gtmx/src/validator"
 	"net/http"
+	"sagre/src/server/routes"
+	authentication "sagre/src/service/auth"
+	"sagre/src/validator"
 
 	"github.com/labstack/echo/v4"
 )

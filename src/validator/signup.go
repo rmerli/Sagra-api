@@ -3,7 +3,7 @@ package validator
 import (
 	"context"
 	"errors"
-	"gtmx/src/service"
+	"sagre/src/service"
 )
 
 type SignUp struct {

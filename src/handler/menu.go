@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"gtmx/src/database/model"
-	"gtmx/src/service"
-	"gtmx/src/types"
 	"net/http"
+	"sagre/src/database/model"
+	"sagre/src/service"
+	"sagre/src/types"
 	"time"
 
 	"github.com/google/uuid"

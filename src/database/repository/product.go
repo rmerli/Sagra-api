@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"gtmx/src/database/model"
+	"sagre/src/database/model"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
