@@ -21,9 +21,8 @@ services:
     image: "sagre:build"
     extends:
       service: build-image
-    depends_on:
-      build-image:
-        condition: service_completed_successfully
+    depends_on: 
+      - build-image
       db:
         condition: service_healthy
     entrypoint: /src/app/sql-migrate
@@ -37,10 +36,8 @@ services:
     image: sagre:build 
     restart: always
     depends_on: 
-      build-image:
-        condition: service_completed_successfully
-      sagre-migration:
-        condition: service_completed_successfully
+      - build-image
+      - sagre-migration
     entrypoint: /src/app/bin/main
 
   db:
