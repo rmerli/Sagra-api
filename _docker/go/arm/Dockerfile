@@ -9,7 +9,7 @@ FROM alpine:3.14 AS prod
 
 WORKDIR /src/app
 COPY --from=builder /src/app ./
-COPY --from=builder ~/go/bin/sql-migrate ./sql-migrate
+COPY --from=builder /go/bin/sql-migrate ./sql-migrate
 
 ARG DB_URL
 ARG STORE_KEY
