@@ -1,6 +1,5 @@
 services:
   build-image:
-    container_name: build-image 
     build:
       context: ./
       dockerfile: _docker/go/arm.Dockerfile
@@ -9,14 +8,13 @@ services:
         - "sagre:build"
     environment:
       ENV: ${ENV}
-      DB_URL: ${DB_URL}
+      DB_URL: db
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
     exclude_from_hc: true
    
   sagre-migration: 
-    container_name: sagre-migration 
     image: "sagre:build"
     extends:
       service: build-image
@@ -39,7 +37,6 @@ services:
     entrypoint: /src/app/bin/main
 
   db:
-    container_name: ${SERVICE_BASE64_DB_NAME}
     image: postgres:17.2
     restart: always
     environment:
