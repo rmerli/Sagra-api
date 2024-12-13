@@ -14,7 +14,7 @@ services:
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
     labes:
-     - coolify.managed=true
+     - coolify.managed=false
 
     
   sagre-migration: 
@@ -30,7 +30,7 @@ services:
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
     labes:
-     - coolify.managed=true
+     - coolify.managed=false
 
   sagre:
     container_name: api
@@ -63,4 +63,4 @@ services:
       - ./postgres/docker-entrypoint-initdb/:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
     labes:
-     - coolify.managed=true
+     - coolify.managed=false
