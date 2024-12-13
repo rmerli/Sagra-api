@@ -14,11 +14,13 @@ COPY --from=builder /src/app/config/dbconfig.yml ./config/dbconfig.yml
 COPY --from=builder /go/bin/sql-migrate ./sql-migrate
 
 ARG DB_URL
+ARG ENV
 ARG STORE_KEY
 ARG PORT
 ARG ADDRESS
 
 ENV DB_URL=$DB_URL
+ENV ENV=$ENV
 ENV STORE_KEY=$STORE_KEY
 ENV PORT=$PORT
 ENV ADDRESS=$ADDRESS

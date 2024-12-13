@@ -5,7 +5,7 @@ local:
   table: migrations
 development:
   dialect: postgres
-  datasource: ${DB_URL} sslmode=disable
+  datasource: ${DB_URL}
   dir: migrations/postgres
   table: migrations
 test:
