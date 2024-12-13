@@ -12,18 +12,16 @@ services:
     container_name: build-image 
     build:
       context: ../
-      dockerfile: _docker/go/x86.Dockerfile
+      dockerfile: _docker/go/arm.Dockerfile
       target: prod
       tags:
         - "sagre:build"
     environment:
-      ENV: dev
-      DB_URL: postgresql://sagre:sagre@sagre_db/sagre_go?sslmode=disable
-      STORE_KEY: secret
-      PORT: 6969
-      ADDRESS: 0.0.0.0
-    expose:
-      - "6969"
+      ENV: ${ENV}
+      DB_URL: ${DB_URL}
+      STORE_KEY: ${STORE_KEY}
+      PORT: ${PORT}
+      ADDRESS: ${ADDRESS}
     
   sagre-migration: 
     container_name: sagre-migration 
