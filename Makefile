@@ -2,7 +2,6 @@ run:
 	air
 build:
 	go build -o bin/main cmd/main.go 
-
 migrate-up:
 	DB_USER=sagra DB_SERVER=localhost DB_PASSWORD=sagra DB_NAME=sagra_go sql-migrate up -config=config/dbconfig.yml
 	DB_USER=sagra DB_SERVER=localhost DB_PASSWORD=sagra sql-migrate up -config=config/dbconfig.yml -env test

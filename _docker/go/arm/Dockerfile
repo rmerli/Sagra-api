@@ -1,4 +1,4 @@
-FROM ricmerli/sagre:0.0.1 as builder
+FROM ricmerli/sagre-arm:0.0.1 as builder
 
 WORKDIR /src/app
 COPY ./ ./
