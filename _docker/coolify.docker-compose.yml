@@ -13,7 +13,7 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
-      exclude_from_hc: true
+    exclude_from_hc: true
 
    
   sagre-migration: 
