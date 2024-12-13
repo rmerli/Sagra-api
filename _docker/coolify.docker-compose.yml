@@ -13,10 +13,7 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
-    labels:
-     - coolify.managed=false
-
-    
+   
   sagre-migration: 
     container_name: sagre-migration 
     image: "sagre:build"
@@ -29,8 +26,6 @@ services:
         condition: service_healthy
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
-    labels:
-     - coolify.managed=false
 
   sagre:
     container_name: api
@@ -62,5 +57,3 @@ services:
     volumes:
       - ./postgres/docker-entrypoint-initdb/:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
-    labels:
-     - coolify.managed=false
