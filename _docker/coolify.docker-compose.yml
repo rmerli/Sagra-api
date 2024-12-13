@@ -8,7 +8,7 @@ services:
         - "sagre:build"
     environment:
       ENV: ${ENV}
-      DB_URL: db
+      DB_URL: ${DB_URL}
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
