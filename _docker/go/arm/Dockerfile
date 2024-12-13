@@ -10,6 +10,7 @@ FROM alpine:3.14 AS prod
 WORKDIR /src/app
 COPY --from=builder /src/app/bin/main /src/app/bin/main
 COPY --from=builder /src/app/config/dbconfig.yml ./config/dbconfig.yml
+COPY --from=builder /src/app/migrations/postgres ./migrations/postgres
 
 COPY --from=builder /go/bin/sql-migrate ./sql-migrate
 
