@@ -39,7 +39,7 @@ services:
     entrypoint: /src/app/bin/main
 
   db:
-    container_name: sagre_db
+    container_name: ${SERVICE_BASE64_DB_NAME}
     image: postgres:17.2
     restart: always
     environment:
