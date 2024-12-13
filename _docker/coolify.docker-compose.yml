@@ -13,7 +13,7 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
-    labes:
+    labels:
      - coolify.managed=false
 
     
@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
-    labes:
+    labels:
      - coolify.managed=false
 
   sagre:
@@ -62,5 +62,5 @@ services:
     volumes:
       - ./postgres/docker-entrypoint-initdb/:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
-    labes:
+    labels:
      - coolify.managed=false
