@@ -11,7 +11,7 @@ services:
   build-image:
     container_name: build-image 
     build:
-      context: ./
+      context: ../
       dockerfile: _docker/go/x86.Dockerfile
       target: prod
       tags:
