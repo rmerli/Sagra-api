@@ -8,6 +8,9 @@ RUN ls -la
 RUN make build
 
 FROM alpine:3.14 as prod
+
+RUN go install github.com/rubenv/sql-migrate/...@v1.6.1
+
 WORKDIR /src/app
 COPY --from=builder /src/app ./
 
