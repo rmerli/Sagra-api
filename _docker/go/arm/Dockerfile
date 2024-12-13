@@ -8,9 +8,10 @@ RUN make build
 FROM alpine:3.14 AS prod
 
 WORKDIR /src/app
-COPY --from=builder /src/app ./
+COPY --from=builder /src/app/bin/main ./main
+COPY --from=builder /src/app/config/dbconfig.yml ./config/dbconfig.yml
+
 COPY --from=builder /go/bin/sql-migrate ./sql-migrate
-COPY --from=builder ./config/dbconfig.yml ./config/dbconfig.yml
 
 ARG DB_URL
 ARG STORE_KEY
