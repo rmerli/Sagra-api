@@ -1,13 +1,4 @@
 services:
-  reverse-proxy:
-    image: traefik:v3.2
-    command: --api.insecure=true --providers.docker
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
   build-image:
     container_name: build-image 
     build:
@@ -48,8 +39,6 @@ services:
       sagre-migration:
         condition: service_completed_successfully
     entrypoint: /src/app/bin/main
-    labels:
-      - "traefik.http.routers.sagre.rule=Host($${DOMAIN})"
 
   db:
     container_name: sagre_db
