@@ -13,6 +13,8 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
+      exclude_from_hc: true
+
    
   sagre-migration: 
     container_name: sagre-migration 
@@ -26,6 +28,7 @@ services:
         condition: service_healthy
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
+    exclude_from_hc: true
 
   sagre:
     container_name: api
@@ -57,3 +60,5 @@ services:
     volumes:
       - ./postgres/docker-entrypoint-initdb/:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
+    exclude_from_hc: true
+
