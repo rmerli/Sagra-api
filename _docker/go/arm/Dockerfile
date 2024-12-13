@@ -11,4 +11,9 @@ FROM alpine:3.14 as prod
 WORKDIR /src/app
 COPY --from=builder /src/app ./
 
+ARG DB_URL
+ARG STORE_KEY
+ARG PORT
+ARG ADDRESS
+
 CMD ["/src/app/bin/main"]
