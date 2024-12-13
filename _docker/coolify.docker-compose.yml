@@ -49,7 +49,7 @@ services:
         condition: service_completed_successfully
     entrypoint: /src/app/bin/main
     labels:
-      - "traefik.http.routers.sagre.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.sagre.rule=Host(${DOMAIN})"
 
   db:
     container_name: sagre_db
