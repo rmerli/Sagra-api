@@ -6,6 +6,7 @@ services:
       target: prod
       tags:
         - "sagre:build"
+    restart: "no"
     environment:
       ENV: ${ENV}
       DB_URL: ${DB_URL}
@@ -16,6 +17,7 @@ services:
    
   sagre-migration: 
     image: "sagre:build"
+    restart: "no"
     extends:
       service: build-image
     depends_on: 
