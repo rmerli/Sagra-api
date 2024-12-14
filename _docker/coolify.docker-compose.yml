@@ -48,6 +48,11 @@ services:
       POSTGRES_PASSWORD: sagre
     ports:
       - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     volumes:
       - type: bind
         source: ./srv/create.sql
