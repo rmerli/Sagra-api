@@ -13,7 +13,6 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
-    exclude_from_hc: true
    
   sagre-migration: 
     image: "sagre:build"
@@ -22,7 +21,7 @@ services:
       service: build-image
     depends_on: 
       db:
-        condition: service_healthy
+        condition: service_completed_successfully
       build-image:
         condition: service_started
     entrypoint: /src/app/sql-migrate
