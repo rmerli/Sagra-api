@@ -25,7 +25,6 @@ services:
         condition: service_started
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
-    exclude_from_hc: true
 
   sagre:
     container_name: api
