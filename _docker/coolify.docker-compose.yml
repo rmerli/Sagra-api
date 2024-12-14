@@ -12,16 +12,17 @@ services:
       STORE_KEY: ${STORE_KEY}
       PORT: ${PORT}
       ADDRESS: ${ADDRESS}
+    exclude_from_hc: true
    
   sagre-migration: 
     image: "sagre:build"
     extends:
       service: build-image
     depends_on: 
-      - build-image
       db:
         condition: service_healthy
-
+      build-image:
+        condition: service_completed_successfully
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
     exclude_from_hc: true
@@ -33,8 +34,10 @@ services:
     image: sagre:build 
     restart: always
     depends_on: 
-      - build-image
-      - sagre-migration
+      build-image:
+        condition: service_completed_successfully
+      sagre-migration:
+        condition: service_completed_successfully
     entrypoint: /src/app/bin/main
 
   db:
@@ -63,3 +66,4 @@ services:
            \c sagre_go
             CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       - ./postgres/data:/var/lib/postgresql/data
+    exclude_from_hc: true
