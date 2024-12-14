@@ -21,9 +21,9 @@ services:
       service: build-image
     depends_on: 
       db:
-        condition: service_completed_successfully
+        condition: service_healthy
       build-image:
-        condition: service_started
+        condition: service_completed_successfully
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
 
