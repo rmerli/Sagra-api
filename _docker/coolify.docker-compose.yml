@@ -50,17 +50,17 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-      - type:
+      - type: bind
         source: ./srv/create.sql
         target: /docker-entrypoint-initdb.d/create.sql
         content: |
            CREATE DATABASE sagre_go OWNER sagre;
-      - type:
+      - type: bind
         source: ./srv/extension.sql
         target: /docker-entrypoint-initdb.d/extension.sql
         content: |
            \c sagre_go
             CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      - ./postgres/data:/var/lib/postgresql/data
          
     exclude_from_hc: true
