@@ -22,7 +22,7 @@ services:
       db:
         condition: service_healthy
       build-image:
-        condition: service_completed_successfully
+        condition: service_started
     entrypoint: /src/app/sql-migrate
     command: ["up", "-config=config/dbconfig.yml"]
     exclude_from_hc: true
@@ -35,7 +35,7 @@ services:
     restart: always
     depends_on: 
       build-image:
-        condition: service_completed_successfully
+        condition: service_started
       sagre-migration:
         condition: service_completed_successfully
     entrypoint: /src/app/bin/main
