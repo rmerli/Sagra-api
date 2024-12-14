@@ -50,6 +50,12 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres/docker-entrypoint-initdb/:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
+      - type: bind
+        source: _docker/postgres/docker-entrypoint-initdb/create.sql
+        target: /docker-entrypoint-initdb.d/init-scripts/create.sql
+      - type: bind
+        source: _docker/postgres/docker-entrypoint-initdb/extension.sql
+        target: /docker-entrypoint-initdb.d/init-scripts/extension.sql
+ 
     exclude_from_hc: true
