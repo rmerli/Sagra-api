@@ -46,11 +46,6 @@ services:
     environment:
       POSTGRES_USER: sagre
       POSTGRES_PASSWORD: sagre
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     ports:
       - 5432:5432
     volumes:
@@ -66,4 +61,3 @@ services:
            \c sagre_go
             CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       - ./postgres/data:/var/lib/postgresql/data
-    exclude_from_hc: true
